@@ -1,0 +1,115 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "schemas/events.proto";
+
+	package nraySchema;
+
+	/* Everything a server sends is packed in a nray server message */
+	message NrayServerMessage {
+		oneof MessageContent {
+			RegisteredNode registeredNode = 1;
+			MoreWorkReply jobBatch = 2;
+			HeartbeatAck heartbeatAck = 3; 
+			WorkDoneAck workDoneAck = 4;
+			GoodbyeAck goodbyeAck = 5;
+			Unregistered nodeIsUnregistered = 6;
+		}
+	}
+
+	/* Everything the nodes sends is packed in a nray node message */
+	message NrayNodeMessage {
+		oneof MessageContent {
+			NodeRegister nodeRegister = 1;
+			Heartbeat heartbeat = 2;
+			MoreWorkRequest moreWork = 3;
+			WorkDone workDone = 4;
+			Goodbye goodbye = 5;
+		}
+	}
+
+	/* ScanTargets may be dnsNames/ips and ports. 
+	   ip is encoded as byte array.
+	   dnsName is a FQDN and mustn't contain a protocol specification */
+	message ScanTargets {
+		repeated string rhosts = 1;
+		repeated uint32 tcpports = 2;
+		repeated uint32 udpports = 3;
+
+	}
+
+	/* This message is sent every time a node registers at 
+	the server. It contains a unique node ID so there are
+	not multiple scanner nodes running on the same machine */
+	message NodeRegister {
+		string machineID = 1;
+		int32 preferredPool = 2;
+		string preferredNodeName = 3;
+		Event envinfo = 4;
+	}
+
+	/* This message is sent by the server and indicates that
+	the server does not know this node and that the node should 
+	register again */
+	message Unregistered {
+		string nodeID = 1;
+	}
+
+	/* This message tells the scanner that it is registered at
+	the server and assigns a unique scanner ID as well as it carries
+	the timestamp of the server, so nodes that have no correct clock
+	can still perform somewhat accurate timestamping of events */
+	message RegisteredNode {
+		string NodeID = 1;
+		google.protobuf.Timestamp ServerClock = 2;
+		//int32 pool = 3;
+		bytes scannerconfig = 4;
+	}
+
+	/* A heartbeat message that is sent regularly from any node
+	to the server to signal that it is still alive */
+	message Heartbeat {
+		string NodeID = 1;
+		google.protobuf.Timestamp BeatTime = 2;
+	}
+
+	/* Acknowledgement of a heartbeat message. A server
+	may indicate to stop scanning and if the scanner should 
+	exit */
+	message HeartbeatAck {
+		bool Scanning = 1;
+		bool Running = 2;
+	}
+
+	/* Sent by a node if it has no work */
+	message MoreWorkRequest {
+		string NodeID = 1;
+	}
+
+	/* Contains more work for a scanner */
+	message MoreWorkReply {
+		uint64 batchid = 1;
+		ScanTargets targets = 3;
+	}
+
+	/* Indicates that a node is done with a work batch
+	and contains the results */
+	message WorkDone {
+		string nodeID = 1;
+		uint64 batchid = 2;
+		repeated Event events = 3;
+	}
+
+	/* Acknowledges a WorkDone packet */
+	message WorkDoneAck {}
+
+	/* Node is going to exit */
+	message Goodbye {
+		string nodeID = 1;
+	}
+	
+	/* Server ACKs the goodbye and signals if 
+	the node is allowed to exit */
+	message GoodbyeAck {
+		bool ok = 1;
+	}
+

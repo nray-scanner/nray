@@ -1,0 +1,178 @@
+## Nray's advanced scanning is supposed to be configured solely via this configuration file
+## Each directive is documented. It is probably best to start with the default configuration
+## and tweak it to fit your use case
+## Note: Changing values with "internal" in the name / hierarchy may break nray in brutal 
+## and/or subtile ways because you are changing *internals*. You have been warned.
+
+# IMPORTANT NOTE ON BLACKLISTS:
+# This affects only target generation on the server. DNS resolution
+# happens on the scannernode. This means that if example.local is at
+# 10.0.0.10 and example.local is  on the blacklist, the IP will 
+# still get scanned if it is in the target list. Of course, this
+# affects also a blacklisted IP which is going to be scanned
+# if a DNS entry not on the blacklist is pointing to it
+
+# Enables Debug output
+debug: false
+
+# Specifies on which port to listen for connections by scanner nodes
+# Having multiple ports listening is fine
+# This setting is only allowed for advanced scans
+listen: [8601]
+
+# Specify the hostname/address to listen on. 0.0.0.0 listens on all
+# interfaces, 127.0.0.1 binds to the loopback interface.
+host: "127.0.0.1"
+
+TLS:
+  enabled: false
+  CA: "/path/to/ca.pem"
+  cert: "/path/to/servercert.pem"
+  key: "/path/to/servercert-key.pem"
+  forceClientAuth: false
+
+# Pools defines how many worker pools are available and therefore
+# how often a target is scanned by different scanners
+pools: 1
+
+# Set considerClientPoolPreference to true if clients should be able
+# to request to be placed in a pool specified by them. If the pool
+# doesn't exist, the server will fall back to assign pools with 
+# fewest nodes.
+considerClientPoolPreference: true
+
+internal:
+  # Seconds until a node that has not sent any heart beat expires
+  nodeExpiryTime: 30
+  # This setting affects the interval in seconds of expiry checks
+  nodeExpiryCheckInterval: 10
+
+# All targetgenerators are configured here
+targetgenerator:
+  bufferSize: 5
+  # The default target generator
+  standard:
+    enabled: true
+    targets: ["192.168.178.1/28"]
+    #targetFile: "./targets.txt"
+    tcpports: ["top25"]
+    udpports: ["top25"]
+    blacklist: []
+    #blacklistFile: "./blacklist.txt"
+    maxHostsPerBatch: 150
+    maxTcpPortsPerBatch: 25
+    maxUdpPortsPerBatch: 25
+  certificatetransparency:
+    enabled: false
+    # For regex debugging: https://play.golang.org/p/jgDiTmPlqdW
+    domainRegex: '^(www[.]).*([.]com)$'
+    tcpports: [top25]
+    udpports: [top25]
+    blacklist: []
+    maxHostsPerBatch: 150
+    maxTcpPortsPerBatch: 25
+    maxUdpPortsPerBatch: 25
+  ldap:
+    enabled: false
+    ldapSearchString: "(objectCategory=computer)"
+    baseDN: "dc=contoso,dc=com"
+    ldapAttribute: "dNSHostName"
+    ldapServer: ""
+    ldapPort: 636
+    insecure: false
+    ldapUser: ""
+    ldapPass: ""
+    tcpports: [top25]
+    udpports: [top25]
+    blacklist: []
+    maxHostsPerBatch: 5
+    maxTcpPortsPerBatch: 25
+    maxUdpPortsPerBatch: 25
+
+
+# Configuration of scanners goes here
+scannerconfig:
+  workers: 250
+  # ratelimit defines how many workers call the scan() function per second. 
+  # Having a rate limit allows us to utilize most ressources by having lots
+  # of workers that may wait for network IO/timeouts whereas in case of a 
+  # burst (e.g. start of a scan) the rate limit blocks all workers from
+  # starting their job at once
+  # Expects a number or 'none' (lowercase!) if no limit should be applied.
+  ratelimit: "none"
+
+  # tcp port scanner
+  tcp:
+    # Connect timeout in milliseconds
+    timeout: 2500ms
+    
+  udp:
+    # Fast sends only probes for known protocols
+    fast: false
+    # Default payload. This is sent when the scanner is not aware of the protocol. See documentation
+    # for a complete list of protocols supported by the scanner
+    defaultHexPayload: "\x6e\x72\x61\x79"
+    # You may define/overwrite port:payloads at your wish. For encoding arbitrary data, see https://golang.org/ref/spec#Rune_literals
+    #customHexPayloads: 
+    #  "19": "A" # chargen. "A" is the same as "\x41" (hex) or "\101" (oct)
+    # Timeout to wait for a response
+    timeout: 2500ms
+
+  # zgrab2 is used for some higher-layer protocol scans
+  zgrab2:
+    enabledModules: []
+    # Configuration for ssh scanner
+    ssh:
+      subscribePorts: ["tcp/22"]
+      timeout: 2500ms
+      ClientID: "SSH-2.0-Go-nray" 
+      CollectUserAuth: true   # see what userauth methods are allowed
+    # Configuration for http(s) scanner
+    # HTTP scanner is currently a little bit buggy, there seem to be also bugs in the upstream implementation.
+    # Use with caution
+    http:
+      subscribeHTTPPorts: ["tcp/80", "tcp/8080", "tcp/8000"]
+      subscribeHTTPSPorts: ["tcp/443", "tcp/8443"]
+      timeout: 2500ms
+      # Values commented out are also defaults, therefore no need to specify them explicitly
+      method: "GET"
+      endpoint: "/"
+      userAgent: "nray" 
+      retryHTTPS: true # If connection attempt via HTTP fails, try HTTPS?
+      maxRedirects: 2     
+
+# Everything in the event node controls if and how data is written
+events:
+  terminal:
+    enabled: true
+    # Any matching filter is going to be printed
+    filter: 
+      environment: # empty filter is printed if a element of this type exists
+      #result.port: 80
+      #result.portscan.open: true
+    internal:
+      channelsize: 1000
+  json-file: 
+    enabled: true 
+    filename: "nray-output.json"
+    # If set to false, overwriteExisting will prevent nray to overwrite
+    # any existing output file. 
+    overwriteExisting: false 
+    internal: # Don't touch these unless you know what you do
+      channelsize: 10000 # Internal event buffer
+      synctimer: 10s # flush interval
+  elasticsearch:
+    enabled: false
+    # FQDN or IP of elasticsearch instance
+    server: "elasticsearch.local"
+    # specifies if HTTPS is used
+    useTLS: true
+    # elasticsearch port
+    port: 443
+    internal:
+      # the index name nray is writing its events to
+      indexname: "nray"
+      # size of the internal buffer
+      channelsize: 10000
+      # time in seconds to commit results to elasticsearch
+      committimer: 3

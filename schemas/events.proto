@@ -1,0 +1,53 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+    package nraySchema;
+    
+    /* Event is a container for everything that happens
+	at a node and should later on be handled by EventHandlers */
+	message Event {
+		string nodeID = 1;
+		string nodeName = 2;
+		google.protobuf.Timestamp timestamp = 3;
+		string scannername = 6;
+		oneof EventData {
+			EnvironmentInformation environment = 7;
+			ScanResult result = 8;
+		}
+	}
+
+	message ScanResult {
+		string target = 4;
+		uint32 port = 5;
+		oneof result {
+			PortScanResult portscan = 8;
+			ZGrab2ScanResult zgrabscan = 9;
+		}
+	}
+    
+    /* EnvironmentInformation tells the server 
+	under which circumstances nodes are running */
+	message EnvironmentInformation {
+		string hostname = 1;
+		string os = 2;
+		string pid = 3;
+		string processname = 4;
+		string username = 5;
+		string cpumodelname = 6;
+    }
+    
+    /* TCPScanResult contains the outcome of
+    a TCP scan against a single port on a single host */
+    message PortScanResult {
+		string target = 1;
+		uint32 port = 2;
+        bool open = 3;
+        string scantype = 4;
+        uint32 timeout = 5;
+	}
+	
+	message ZGrab2ScanResult {
+		google.protobuf.Value jsonResult = 1;
+	}
+
