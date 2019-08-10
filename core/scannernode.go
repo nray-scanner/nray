@@ -62,6 +62,14 @@ func RunNode(args NodeCmdArgs) {
 			"src":    "RunNode",
 		}).Debugf("Truncating name to %s", args.NodeName)
 	}
+	if args.Server == "" {
+		log.Printf("Server is not specified, using localhost")
+		args.Server = "localhost"
+	}
+	if args.Port == "" {
+		log.Printf("Port is not specified, using 8601")
+		args.Port = "8601"
+	}
 
 	var socketConfig map[string]interface{}
 	socketConfig, err := setupMangosClientTLSConfig(args.UseTLS, args.TLSIgnoreServerCertificate, args.TLSCACertPath,
