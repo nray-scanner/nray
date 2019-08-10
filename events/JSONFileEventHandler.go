@@ -27,8 +27,6 @@ type JSONFileEventHandler struct {
 // internal.channelsize: the size of the internally used buffering channel
 // internal.synctimer: intervall to periodically flush events in seconds.
 func (handler *JSONFileEventHandler) Configure(config *viper.Viper) error {
-	log.SetLevel(log.DebugLevel)
-
 	var err error
 	log.WithFields(log.Fields{
 		"module": "events.JSONFileEventHandler",
