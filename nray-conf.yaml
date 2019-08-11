@@ -1,6 +1,7 @@
+## Full documentation and further information can be found at https://nray-scanner.org
 ## Nray's advanced scanning is supposed to be configured solely via this configuration file
 ## Each directive is documented. It is probably best to start with the default configuration
-## and tweak it to fit your use case
+## and tweak it to fit your use case.
 ## Note: Changing values with "internal" in the name / hierarchy may break nray in brutal 
 ## and/or subtile ways because you are changing *internals*. You have been warned.
 
@@ -40,6 +41,10 @@ pools: 1
 # doesn't exist, the server will fall back to assign pools with 
 # fewest nodes.
 considerClientPoolPreference: true
+# This randomizes the nodeID, allowing to run multiple nodes on the same
+# machine or in scenarios where no unique ID can be generated from the 
+# environment, for example container environments like Kubernetes
+allowMultipleNodesPerHost: false
 
 internal:
   # Seconds until a node that has not sent any heart beat expires
