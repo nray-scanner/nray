@@ -12,14 +12,11 @@ create-schemas:
 
 prepare:
 	mkdir -p ./build
-#	go mod tidy
 	cp nray-conf.yaml ./build/
-	cp tls.md ./build/
 
 build-localarch:
 	go build -race -ldflags "-X main.server=127.0.0.1 -X main.port=8601" -o build/$(TARGET_NAME)_localhardcoded ./nray.go 
 	go build -race -o build/$(TARGET_NAME) ./nray.go 
-
 
 build-x86-linux: 
 	CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -ldflags "-s -w" -o build/$(TARGET_NAME)-x86-linux ./nray.go 
