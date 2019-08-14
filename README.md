@@ -8,7 +8,7 @@ Furthermore, nray allow to run in a distributed manner to speed up scans and to 
 Event-based results allow to further process information during the scan, e.g. using tools like `jq` or full-blown data analysis platforms like elasticsearch or Splunk.
 
 This is the main repository where nray is developed. 
-Downloads are [here](https://TODO). 
+Downloads are [here](https://github.com/nray-scanner/nray/releases). 
 If you are looking for user documentation, have a look at the [project homepage](https://nray-scanner.org). 
 For information related to developing and contributing to nray, continue reading.
 

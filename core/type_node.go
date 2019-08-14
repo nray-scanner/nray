@@ -11,7 +11,7 @@ import (
 type Node struct {
 	ID            string
 	Name          string
-	MetaInfo      string // TODO Stuff like OS etc
+	MetaInfo      string
 	LastHeartbeat time.Time
 	CurrentWork   *targetgeneration.AnyTargets
 	heartBeatLock sync.RWMutex

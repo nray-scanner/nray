@@ -16,7 +16,6 @@ import (
 )
 
 // UDPScanner contains the configuration for this scanner
-// TODO: allow own port/payload associations via config
 type UDPScanner struct {
 	fast           bool
 	timeout        time.Duration
