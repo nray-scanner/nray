@@ -66,18 +66,12 @@ func (t *TerminalEventHandler) startEventPrinter() {
 			if len(t.eventFilter) > 0 {
 				for filter, value := range t.eventFilter {
 					if FilterMatchesEvent(event, filter, value) {
-						log.WithFields(log.Fields{
-							"module": "events.TerminalEventHandler",
-							"src":    "startEventPrinter",
-						}).Infof("Event: %s", event)
+						log.Infof("Event: %s", event)
 						break
 					}
 				}
 			} else {
-				log.WithFields(log.Fields{
-					"module": "events.TerminalEventHandler",
-					"src":    "StartEventPrinter",
-				}).Infof("Event: %s", event)
+				log.Infof("Event: %s", event)
 			}
 		} else {
 			return
