@@ -40,6 +40,7 @@ Every contribution is welcome and the goal is to make nray an awesome project fo
 
 Your code should pass standard checks performed by go vet and go lint. 
 I recommend using Visual Studio Code with its Go support enabled, it is a really good IDE that brings such issues up early.
+Nray is always developed against the latest Go release, so if you are having trouble building nray, check if you have the latest go version installed.
 
 ### Creating issues
 
