@@ -80,39 +80,6 @@ func RunNodeScannerLoop(controller *ScanController, workBatchChan <-chan *nraySc
 		}
 
 		go controller.waitForScanToFinishAndEventsToBeProcessed()
-		//close(controller.scanQueue)
-
-		/*
-			Port Scanning comes here
-			Port scanning may be done really fast. Simon and JJ are interested in ZMap support,
-			so here are my thoughts:
-			- For nray and the regular connect scan, timeouts and latency are the slow parts, so don't care
-			and do it with the same workers that are used later for higher layer scans. This simplifies also
-			configuration and other stuff
-			- If another scanner backend or a native asynchronous implementation is to be used, using workers
-			probably kills the performance and therefore all targets should be passed in one batch
-			- This requires that every part in the chain is aware of the backend. Server, target generation and node.
-			Therefore you may need to implement other target generation (e.g. spew CIDR networks for ZMap), add a field
-			to the message format specifying the scanner plus path, arguments etc. and you need to implement the call to
-			the scanner right here. Also, results have to be collected and you may still want to use higher layer scanners
-			on these results ;)
-
-			// TODO for the reader: Implement
-			if controller.desiredScanner == "default" {
-				do what is already done here
-			} else if controller.desiredScanner == "ZMap" {
-				build your ZMap logic here
-			} else {
-				Masscan? Nmap? A fast async go implementation? Your imagination are the only limits!
-			}
-		*/
-
-		// The standard tcp scanner is not built for performance, so to simplify things workers do port and higher layer scans
-
-		/*
-			Higher layer protocols come here
-
-		*/
 
 		// STEPS
 
