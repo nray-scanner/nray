@@ -12,10 +12,10 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/denisbrodbeck/machineid"
-	nraySchema "github.com/nray-scanner/nray/schemas"
-	"github.com/nray-scanner/nray/utils"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
+	nraySchema "github.com/nray-scanner/nray/schemas"
+	"github.com/nray-scanner/nray/utils"
 	log "github.com/sirupsen/logrus"
 	mangos "nanomsg.org/go/mangos/v2"
 )
@@ -203,6 +203,13 @@ func generateNodeRegister(nodeName string, preferredPool int32) []byte {
 	// instances running on the same machine
 	id, err := machineid.ProtectedID("nray-scanner")
 	utils.CheckError(err, false)
+	if err != nil || len(id) < 8 {
+		log.WithFields(log.Fields{
+			"module": "core.messagestuff",
+			"src":    "generateNodeRegister",
+		}).Warningf("Some error occured during generation of node ID. Falling back to random node IDs.")
+		id = generateRandomNodeID()
+	}
 	envInfo := gatherEnvironmentInformation()
 	event := &nraySchema.Event{
 		NodeID:      id[0:8],
