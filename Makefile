@@ -44,3 +44,8 @@ create-archive:
 	zip -r release.zip build/
 
 release: clean prepare build-jobs calculate-hashes create-archive
+
+.PHONY: docker
+docker:	build-x64-linux
+	docker build -t nray-scanner/nray-debian -f docker/dockerfile-debian .
+	docker build -t nray-scanner/nray-scratch -t latest -f docker/dockerfile-scratch  .

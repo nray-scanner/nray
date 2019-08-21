@@ -1,0 +1,5 @@
+FROM debian:latest
+MAINTAINER Michael Eder <spam-dockerfile@michael-eder.net>
+RUN mkdir /nray-data
+ADD build/nray-x64-linux nray
+ENTRYPOINT ["/nray"]
