@@ -1,5 +1,6 @@
 FROM busybox AS build-env
 RUN mkdir /nray-data
+RUN chown 1000:1000 /nray-data
 
 
 FROM scratch
