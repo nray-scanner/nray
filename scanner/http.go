@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/golang/protobuf/ptypes"
 	nraySchema "github.com/nray-scanner/nray/schemas"
 	"github.com/nray-scanner/nray/utils"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/spf13/viper"
 
 	"github.com/zmap/zgrab2"
@@ -29,6 +29,7 @@ type HTTPScanner struct {
 // in this struct, therefore this generates rather a template
 // that is to be modified again for each scan.
 func initHTTPFlags(configuration *viper.Viper) http.Flags {
+	utils.CreateDefaultScannerZgrab2HTTPConfig(configuration)
 	// Define defaults
 	confTimeout := 2500 * time.Millisecond
 	confTLSHeartbleed := true

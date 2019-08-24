@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nray-scanner/nray/utils"
 	"github.com/golang/protobuf/ptypes"
+	"github.com/nray-scanner/nray/utils"
 
 	nraySchema "github.com/nray-scanner/nray/schemas"
 	"github.com/spf13/viper"
@@ -28,6 +28,7 @@ type SSHScanner struct {
 }
 
 func initSSHFlags(configuration *viper.Viper) modules.SSHFlags {
+	utils.CreateDefaultScannerZgrab2SSHConfig(configuration)
 	var confKexAlgos, confHostKeyAlgos, confCiphers string
 	dummyConf := ssh.MakeSSHConfig()
 	defaultHostKeyAlgos := strings.Join(dummyConf.HostKeyAlgorithms, ",")

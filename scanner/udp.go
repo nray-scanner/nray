@@ -75,6 +75,7 @@ func udpProtoScan(target string, port uint32, config UDPScanner) (*PortscanResul
 
 // Configure sets relevant configuration on this scanner
 func (udpscan *UDPScanner) Configure(config *viper.Viper) {
+	utils.CreateDefaultScannerUDPConfig(config)
 	udpscan.timeout = config.GetDuration("timeout")
 	udpscan.fast = config.GetBool("fast")
 	decoded := []byte(config.GetString("defaultHexPayload"))

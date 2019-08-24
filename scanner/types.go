@@ -10,6 +10,7 @@ import (
 	"github.com/golang/time/rate"
 
 	nraySchema "github.com/nray-scanner/nray/schemas"
+	"github.com/nray-scanner/nray/utils"
 	"github.com/spf13/viper"
 )
 
@@ -106,6 +107,7 @@ func CreateScanController(nodeID string, nodeName string, timeOffset time.Durati
 	if nodeName == "" {
 		nodeName = nodeID
 	}
+	utils.CreateDefaultScannerConfig(scannerConfig)
 	sc := &ScanController{
 		nodeID:              nodeID,
 		nodeName:            nodeName,

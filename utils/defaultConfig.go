@@ -18,7 +18,6 @@ func CreateDefaultConfig() {
 	viper.SetDefault("considerClientPoolPreference", true)
 	createDefaultInternalConfig()
 	createDefaultTargetgeneratorConfig()
-	createDefaultScannerConfig()
 	createDefaultEventConfig()
 
 }
@@ -85,74 +84,76 @@ func createDefaultTargetgeneratorLDAPConfig() {
 	viper.SetDefault("ldap.maxUdpPortsPerBatch", 25)
 }
 
-func createDefaultScannerConfig() {
-	viper.SetDefault("scannerconfig.workers", 250)
-	viper.SetDefault("scannerconfig.ratelimit", "none")
-	createDefaultScannerTCPConfig()
-	createDefaultScannerUDPConfig()
-	createDefaultScannerZgrab2Config()
+// CreateDefaultScannerConfig is called when the node applies the configuration sent
+// by the server in order to have defaults in place
+func CreateDefaultScannerConfig(config *viper.Viper) {
+	config.SetDefault("workers", 250)
+	config.SetDefault("ratelimit", "none")
+	createDefaultScannerZgrab2Config(config)
 }
 
-func createDefaultScannerTCPConfig() {
-	viper.SetDefault("scannerconfig.tcp.timeout", "2500ms")
+// CreateDefaultScannerTCPConfig is called when the TCP scanner is initialized
+func CreateDefaultScannerTCPConfig(config *viper.Viper) {
+	config.SetDefault("timeout", "2500ms")
 }
 
-func createDefaultScannerUDPConfig() {
-	viper.SetDefault("scannerconfig.udp.fast", false)
-	viper.SetDefault("scannerconfig.udp.defaultHexPayload", "\x6e\x72\x61\x79") // "nray"
-	viper.SetDefault("scannerconfig.udp.customHexPayloads", map[string]string{})
-	viper.SetDefault("scannerconfig.udp.timeout", "2500ms")
+// CreateDefaultScannerUDPConfig is called when the UDP scanner is initialized
+func CreateDefaultScannerUDPConfig(config *viper.Viper) {
+	config.SetDefault("fast", false)
+	config.SetDefault("defaultHexPayload", "\x6e\x72\x61\x79") // "nray"
+	config.SetDefault("customHexPayloads", map[string]string{})
+	config.SetDefault("timeout", "2500ms")
 }
 
-func createDefaultScannerZgrab2Config() {
-	viper.SetDefault("scannerconfig.zgrab2.enabledModules", []string{})
-	createDefaultScannerZgrab2SSHConfig()
-	createDefaultScannerZgrab2HTTPConfig()
+func createDefaultScannerZgrab2Config(config *viper.Viper) {
+	config.SetDefault("zgrab2.enabledModules", []string{})
 }
 
-func createDefaultScannerZgrab2SSHConfig() {
-	viper.SetDefault("scannerconfig.zgrab2.ssh.subscribePorts", []string{"tcp/22"})
-	viper.SetDefault("scannerconfig.zgrab2.ssh.timeout", "2500ms")
-	viper.SetDefault("scannerconfig.zgrab2.ssh.ClientID", "SSH-2.0-Go-nray")
+// CreateDefaultScannerZgrab2SSHConfig is called when Zgrab SSH is initialized
+func CreateDefaultScannerZgrab2SSHConfig(config *viper.Viper) {
+	config.SetDefault("subscribePorts", []string{"tcp/22"})
+	config.SetDefault("timeout", "2500ms")
+	config.SetDefault("ClientID", "SSH-2.0-Go-nray")
 	// TODO: Research valid / working / useful values for cryptographic primitives
-	viper.SetDefault("scannerconfig.zgrab2.ssh.KexAlgorithms", "")
-	viper.SetDefault("scannerconfig.zgrab2.ssh.HostKeyAlgorithms", "")
-	viper.SetDefault("scannerconfig.zgrab2.ssh.Ciphers", "")
-	viper.SetDefault("scannerconfig.zgrab2.ssh.CollectUserAuth", true)
-	viper.SetDefault("scannerconfig.zgrab2.ssh.GexMinBits", 1024)
-	viper.SetDefault("scannerconfig.zgrab2.ssh.GexMaxBits", 8192)
-	viper.SetDefault("scannerconfig.zgrab2.ssh.GexPreferredBits", 2048)
-	viper.SetDefault("scannerconfig.zgrab2.ssh.Verbose", false)
+	config.SetDefault("KexAlgorithms", "")
+	config.SetDefault("HostKeyAlgorithms", "")
+	config.SetDefault("Ciphers", "")
+	config.SetDefault("CollectUserAuth", true)
+	config.SetDefault("GexMinBits", 1024)
+	config.SetDefault("GexMaxBits", 8192)
+	config.SetDefault("GexPreferredBits", 2048)
+	config.SetDefault("Verbose", false)
 }
 
-func createDefaultScannerZgrab2HTTPConfig() {
-	viper.SetDefault("scannerconfig.zgrab2.http.subscribeHTTPPorts", []string{"tcp/80", "tcp/8080", "tcp/8000"})
-	viper.SetDefault("scannerconfig.zgrab2.http.subscribeHTTPPorts", []string{"tcp/443", "tcp/8443"})
-	viper.SetDefault("scannerconfig.zgrab2.http.timeout", "2500ms")
-	viper.SetDefault("scannerconfig.zgrab2.http.method", "GET")
-	viper.SetDefault("scannerconfig.zgrab2.http.endpoint", "/")
-	viper.SetDefault("scannerconfig.zgrab2.http.userAgent", "nray")
-	viper.SetDefault("scannerconfig.zgrab2.http.retryHTTPS", false)
-	viper.SetDefault("scannerconfig.zgrab2.http.maxSize", 256)
-	viper.SetDefault("scannerconfig.zgrab2.http.maxRedirects", 2)
-	createDefaultScannerZgrab2HTTPTlsConfig()
+// CreateDefaultScannerZgrab2HTTPConfig is called when Zgrab HTTP is initialized
+func CreateDefaultScannerZgrab2HTTPConfig(config *viper.Viper) {
+	config.SetDefault("subscribeHTTPPorts", []string{"tcp/80", "tcp/8080", "tcp/8000"})
+	config.SetDefault("subscribeHTTPPorts", []string{"tcp/443", "tcp/8443"})
+	config.SetDefault("timeout", "2500ms")
+	config.SetDefault("method", "GET")
+	config.SetDefault("endpoint", "/")
+	config.SetDefault("userAgent", "nray")
+	config.SetDefault("retryHTTPS", false)
+	config.SetDefault("maxSize", 256)
+	config.SetDefault("maxRedirects", 2)
+	createDefaultScannerZgrab2HTTPTlsConfig(config)
 }
 
-func createDefaultScannerZgrab2HTTPTlsConfig() {
+func createDefaultScannerZgrab2HTTPTlsConfig(config *viper.Viper) {
 	// TODO: Research valid / working / useful values for cryptographic primitives
-	viper.SetDefault("scannerconfig.zgrab2.http.heartbleed", true)
-	viper.SetDefault("scannerconfig.zgrab2.http.sessionTicket", true)
-	viper.SetDefault("scannerconfig.zgrab2.http.extendedMasterSecret", true)
-	viper.SetDefault("scannerconfig.zgrab2.http.extendedRandom", true)
-	viper.SetDefault("scannerconfig.zgrab2.http.noSNI", false)
-	viper.SetDefault("scannerconfig.zgrab2.http.sctExt", false)
-	viper.SetDefault("scannerconfig.zgrab2.http.keepClientLogs", false)
-	viper.SetDefault("scannerconfig.zgrab2.http.verifyServerCertificate", false)
-	viper.SetDefault("scannerconfig.zgrab2.http.minVersion", 0)
-	viper.SetDefault("scannerconfig.zgrab2.http.maxVersion", 0)
-	viper.SetDefault("scannerconfig.zgrab2.http.noECDHE", false)
-	viper.SetDefault("scannerconfig.zgrab2.http.heartbeatEnabled", true)
-	viper.SetDefault("scannerconfig.zgrab2.http.dsaEnabled", true)
+	config.SetDefault("heartbleed", true)
+	config.SetDefault("sessionTicket", true)
+	config.SetDefault("extendedMasterSecret", true)
+	config.SetDefault("extendedRandom", true)
+	config.SetDefault("noSNI", false)
+	config.SetDefault("sctExt", false)
+	config.SetDefault("keepClientLogs", false)
+	config.SetDefault("verifyServerCertificate", false)
+	config.SetDefault("minVersion", 0)
+	config.SetDefault("maxVersion", 0)
+	config.SetDefault("noECDHE", false)
+	config.SetDefault("heartbeatEnabled", true)
+	config.SetDefault("dsaEnabled", true)
 }
 
 func createDefaultEventConfig() {

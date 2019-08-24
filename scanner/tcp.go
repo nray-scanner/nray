@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/nray-scanner/nray/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -60,5 +61,6 @@ type TCPScanner struct {
 
 // Configure loads a viper configuration and sets the appropriate values
 func (tcpscan *TCPScanner) Configure(config *viper.Viper) {
+	utils.CreateDefaultScannerTCPConfig(config)
 	tcpscan.timeout = config.GetDuration("timeout")
 }
