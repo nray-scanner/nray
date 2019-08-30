@@ -16,6 +16,7 @@ type TerminalEventHandler struct {
 
 // Configure does currently nothing as there is nothing to configure yet
 func (t *TerminalEventHandler) Configure(config *viper.Viper) error {
+	utils.CreateDefaultEventTerminalConfig(config)
 	t.eventChan = make(chan string, config.GetInt("internal.channelsize"))
 	t.eventFilter = config.GetStringMap("filter")
 	go t.startEventPrinter()

@@ -18,7 +18,6 @@ func CreateDefaultConfig() {
 	viper.SetDefault("considerClientPoolPreference", true)
 	createDefaultInternalConfig()
 	createDefaultTargetgeneratorConfig()
-	createDefaultEventConfig()
 
 }
 
@@ -156,48 +155,42 @@ func createDefaultScannerZgrab2HTTPTlsConfig(config *viper.Viper) {
 	config.SetDefault("dsaEnabled", true)
 }
 
-func createDefaultEventConfig() {
-	createDefaultEventTerminalConfig()
-	createDefaultEventJSONFileConfig()
-	createDefaultEventElasticsearchConfig()
+func CreateDefaultEventTerminalConfig(config *viper.Viper) {
+	config.SetDefault("enabled", true)
+	createDefaultEventTerminalFilterConfig(config)
+	createDefaultEventTerminalInternalConfig(config)
 }
 
-func createDefaultEventTerminalConfig() {
-	viper.SetDefault("events.terminal.enabled", true)
-	createDefaultEventTerminalFilterConfig()
-	createDefaultEventTerminalInternalConfig()
+func createDefaultEventTerminalFilterConfig(config *viper.Viper) {
+	config.SetDefault("filter.environment", "")
+	config.SetDefault("filter.portscan.open", true)
 }
 
-func createDefaultEventTerminalFilterConfig() {
-	viper.SetDefault("events.terminal.filter.environment", "")
-	viper.SetDefault("events.terminal.filter.portscan.open", true)
+func createDefaultEventTerminalInternalConfig(config *viper.Viper) {
+	config.SetDefault("internal.channelsize", 1000)
 }
 
-func createDefaultEventTerminalInternalConfig() {
-	viper.SetDefault("events.terminal.internal.channelsize", 1000)
+func CreateDefaultEventJSONFileConfig(config *viper.Viper) {
+	config.SetDefault("enabled", true)
+	config.SetDefault("filename", "nray-output.json")
+	config.SetDefault("overwriteExisting", false)
+	createDefaultEventJSONFileInternalConfig(config)
 }
 
-func createDefaultEventJSONFileConfig() {
-	viper.SetDefault("events.json-file.enabled", true)
-	viper.SetDefault("events.json-file.filename", "nray-output.json")
-	viper.SetDefault("events.json-file.overwriteExisting", false)
-	createDefaultEventJSONFileInternalConfig()
+func createDefaultEventJSONFileInternalConfig(config *viper.Viper) {
+	config.SetDefault("internal.channelsize", 10000)
+	config.SetDefault("internal.synctimer", 10*time.Second)
 }
 
-func createDefaultEventJSONFileInternalConfig() {
-	viper.SetDefault("events.json-file.internal.channelsize", 10000)
-	viper.SetDefault("events.json-file.internal.synctimer", 10*time.Second)
+func CreateDefaultEventElasticsearchConfig(config *viper.Viper) {
+	config.SetDefault("enabled", false)
+	config.SetDefault("useTLS", true)
+	config.SetDefault("port", 443)
+	createDefaultEventElasticsearchInternalConfig(config)
 }
 
-func createDefaultEventElasticsearchConfig() {
-	viper.SetDefault("events.elasticsearch.enabled", false)
-	viper.SetDefault("events.elasticsearch.useTLS", true)
-	viper.SetDefault("events.elasticsearch.port", 443)
-	createDefaultEventElasticsearchInternalConfig()
-}
-
-func createDefaultEventElasticsearchInternalConfig() {
-	viper.SetDefault("events.elasticsearch.internal.indexname", "nray")
-	viper.SetDefault("events.elasticsearch.internal.channelsize", 10000)
-	viper.SetDefault("events.elasticsearch.internal.committimer", 3)
+func createDefaultEventElasticsearchInternalConfig(config *viper.Viper) {
+	config.SetDefault("internal.indexname", "nray")
+	config.SetDefault("internal.channelsize", 10000)
+	config.SetDefault("internal.committimer", 3)
 }

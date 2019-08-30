@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	nraySchema "github.com/nray-scanner/nray/schemas"
 	"github.com/nray-scanner/nray/utils"
 	log "github.com/sirupsen/logrus"
@@ -27,6 +28,8 @@ type JSONFileEventHandler struct {
 // internal.channelsize: the size of the internally used buffering channel
 // internal.synctimer: intervall to periodically flush events in seconds.
 func (handler *JSONFileEventHandler) Configure(config *viper.Viper) error {
+	utils.CreateDefaultEventJSONFileConfig(config)
+	spew.Dump(config.AllSettings())
 	var err error
 	log.WithFields(log.Fields{
 		"module": "events.JSONFileEventHandler",

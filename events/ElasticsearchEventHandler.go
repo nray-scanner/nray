@@ -35,6 +35,7 @@ type ElasticsearchEventHandler struct {
 
 // Configure takes a viper configuration to set up this event handler
 func (handler *ElasticsearchEventHandler) Configure(config *viper.Viper) error {
+	utils.CreateDefaultEventElasticsearchConfig(config)
 	handler.requestBodySlice = make([]string, 0)
 	proto := "http"
 	if config.GetBool("useTLS") {
