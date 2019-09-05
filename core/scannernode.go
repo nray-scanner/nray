@@ -186,15 +186,39 @@ mainloop:
 }
 
 func gatherEnvironmentInformation() *nraySchema.EnvironmentInformation {
-	hostinfo, _ := host.Info()
+	var err error
+	var hostname, hostos, processname, username, cpumodelname string
+	hostinfo, err := host.Info()
+	utils.CheckError(err, false)
+	if err != nil {
+		hostname = "unknown"
+		hostos = "unknown"
+	} else {
+		hostname = hostinfo.Hostname
+		hostos = hostinfo.OS
+	}
+
 	pid := os.Getpid()
-	proc, _ := process.NewProcess(int32(pid))
-	processname, _ := proc.Name()
-	username, _ := proc.Username()
-	cpuinfo, _ := cpu.Info()
-	hostname := hostinfo.Hostname
-	hostos := hostinfo.OS
-	cpumodelname := cpuinfo[0].ModelName
+	proc, err := process.NewProcess(int32(pid))
+	utils.CheckError(err, false)
+	processname, err = proc.Name()
+	utils.CheckError(err, false)
+	if err != nil {
+		processname = "unknown"
+	}
+	username, err = proc.Username()
+	utils.CheckError(err, false)
+	if err != nil {
+		username = "unknown"
+	}
+	cpuinfo, err := cpu.Info()
+	utils.CheckError(err, false)
+	if err != nil || len(cpuinfo) == 0 {
+		cpumodelname = "unknown"
+	} else {
+		cpumodelname = cpuinfo[0].ModelName
+	}
+
 	message := &nraySchema.EnvironmentInformation{
 		Hostname:     hostname,
 		Os:           hostos,
