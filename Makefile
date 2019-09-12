@@ -38,9 +38,14 @@ build-darwin:
 	CGO_ENABLED=0 GOOS=darwin go build -ldflags "-s -w" -o build/$(TARGET_NAME)-macos ./nray.go 
 
 calculate-hashes:
-	sha256sum build/* > build/checksums.txt
+	cd build; sha256sum * > ./sha256sums.txt; cd ..
 
 create-archive:
 	zip -r release.zip build/
 
-release: clean prepare build-jobs calculate-hashes create-archive
+release: clean prepare build-jobs calculate-hashes
+
+.PHONY: docker
+docker:	build-x64-linux
+	docker build -t nrayscanner/nray-debian:1.0.1 -t nrayscanner/nray-debian:latest -f docker/dockerfile-debian .
+	docker build -t nrayscanner/nray-scratch:1.0.1 -t nrayscanner/nray-scratch:latest -f docker/dockerfile-scratch  .

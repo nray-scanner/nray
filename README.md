@@ -33,6 +33,22 @@ For nodes, it is possible to inject server location and port directly into the b
 To get smaller binaries, strip stuff that is not necessary away via `-ldflags="-s -w"` when calling `go build`.
 If you need to rebuild the protobuf schemas (this is not required unless you change the wire protocol!), run `make create-schemas` (which requires the protobuf compiler on your system). 
 
+### Docker (building)
+
+Releases are built using the official Go Docker container. 
+This is supposed to ensure a clean build regardless of development environment, distribution etc.
+
+If you are unfamiliar with setting up Go or encounter any other problems, `docker run --rm -v "$PWD":/nray -w /nray golang:latest make release` can be used to build the release binaries in a clean environment using Docker. 
+
+### Docker (running)
+
+There are two official nray images that can be built using the Dockerfiles provided or by pulling the respective images from Docker Hub.
+
+The first image is based on Docker's scratch image, meaning that there is no usable user space.
+This image is really small since it contains only nray.
+
+The second image is based on Debian and brings some user space which makes it suitable to manually interacting with the container.
+
 ## Contributing and Development
 
 Just grab the code and fix stuff that annoys you or hack in new awesome features!

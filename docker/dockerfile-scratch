@@ -1,0 +1,11 @@
+FROM busybox AS build-env
+RUN mkdir /nray-data
+RUN chown 1000:1000 /nray-data
+
+
+FROM scratch
+MAINTAINER Michael Eder <spam-dockerfile@michael-eder.net>
+ADD build/nray-x64-linux nray
+COPY --from=build-env /nray-data/ /nray-data/
+USER 1000:1000
+ENTRYPOINT ["/nray"]
