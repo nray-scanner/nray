@@ -28,7 +28,7 @@ type SSHScanner struct {
 }
 
 func initSSHFlags(configuration *viper.Viper) modules.SSHFlags {
-	utils.CreateDefaultScannerZgrab2SSHConfig(configuration)
+	configuration = utils.ApplyDefaultScannerZgrab2SSHConfig(configuration)
 	var confKexAlgos, confHostKeyAlgos, confCiphers string
 	dummyConf := ssh.MakeSSHConfig()
 	defaultHostKeyAlgos := strings.Join(dummyConf.HostKeyAlgorithms, ",")

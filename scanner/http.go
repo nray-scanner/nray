@@ -29,7 +29,7 @@ type HTTPScanner struct {
 // in this struct, therefore this generates rather a template
 // that is to be modified again for each scan.
 func initHTTPFlags(configuration *viper.Viper) http.Flags {
-	utils.CreateDefaultScannerZgrab2HTTPConfig(configuration)
+	configuration = utils.ApplyDefaultScannerZgrab2HTTPConfig(configuration)
 	// Define defaults
 	confTimeout := 2500 * time.Millisecond
 	confTLSHeartbleed := true

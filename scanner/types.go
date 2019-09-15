@@ -102,12 +102,12 @@ type ScanController struct {
 	scansRunning        int64
 }
 
-// CreateScanController initialises a ned ScanController
+// CreateScanController initialises a new ScanController
 func CreateScanController(nodeID string, nodeName string, timeOffset time.Duration, scannerConfig *viper.Viper) *ScanController {
 	if nodeName == "" {
 		nodeName = nodeID
 	}
-	utils.CreateDefaultScannerConfig(scannerConfig)
+	scannerConfig = utils.ApplyDefaultScannerConfig(scannerConfig)
 	sc := &ScanController{
 		nodeID:              nodeID,
 		nodeName:            nodeName,

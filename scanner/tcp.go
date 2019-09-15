@@ -61,6 +61,6 @@ type TCPScanner struct {
 
 // Configure loads a viper configuration and sets the appropriate values
 func (tcpscan *TCPScanner) Configure(config *viper.Viper) {
-	utils.CreateDefaultScannerTCPConfig(config)
+	config = utils.ApplyDefaultScannerTCPConfig(config)
 	tcpscan.timeout = config.GetDuration("timeout")
 }

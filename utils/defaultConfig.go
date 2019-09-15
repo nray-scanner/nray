@@ -83,114 +83,131 @@ func createDefaultTargetgeneratorLDAPConfig() {
 	viper.SetDefault("ldap.maxUdpPortsPerBatch", 25)
 }
 
-// CreateDefaultScannerConfig is called when the node applies the configuration sent
+// ApplyDefaultScannerConfig is called when the node applies the configuration sent
 // by the server in order to have defaults in place
-func CreateDefaultScannerConfig(config *viper.Viper) {
-	config.SetDefault("workers", 250)
-	config.SetDefault("ratelimit", "none")
-	createDefaultScannerZgrab2Config(config)
+func ApplyDefaultScannerConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("workers", 250)
+	defaultConfig.SetDefault("ratelimit", "none")
+	defaultConfig.SetDefault("zgrab2.enabledModules", []string{})
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-// CreateDefaultScannerTCPConfig is called when the TCP scanner is initialized
-func CreateDefaultScannerTCPConfig(config *viper.Viper) {
-	config.SetDefault("timeout", "2500ms")
+// ApplyDefaultScannerTCPConfig is called when the TCP scanner is initialized
+func ApplyDefaultScannerTCPConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("timeout", "2500ms")
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-// CreateDefaultScannerUDPConfig is called when the UDP scanner is initialized
-func CreateDefaultScannerUDPConfig(config *viper.Viper) {
-	config.SetDefault("fast", false)
-	config.SetDefault("defaultHexPayload", "\x6e\x72\x61\x79") // "nray"
-	config.SetDefault("customHexPayloads", map[string]string{})
-	config.SetDefault("timeout", "2500ms")
+// ApplyDefaultScannerUDPConfig is called when the UDP scanner is initialized
+func ApplyDefaultScannerUDPConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("fast", false)
+	defaultConfig.SetDefault("defaultHexPayload", "\x6e\x72\x61\x79") // "nray"
+	defaultConfig.SetDefault("customHexPayloads", map[string]string{})
+	defaultConfig.SetDefault("timeout", "2500ms")
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+
+	}
+	return defaultConfig
 }
 
-func createDefaultScannerZgrab2Config(config *viper.Viper) {
-	config.SetDefault("zgrab2.enabledModules", []string{})
-}
-
-// CreateDefaultScannerZgrab2SSHConfig is called when Zgrab SSH is initialized
-func CreateDefaultScannerZgrab2SSHConfig(config *viper.Viper) {
-	config.SetDefault("subscribePorts", []string{"tcp/22"})
-	config.SetDefault("timeout", "2500ms")
-	config.SetDefault("ClientID", "SSH-2.0-Go-nray")
+// ApplyDefaultScannerZgrab2SSHConfig is called when Zgrab SSH is initialized
+func ApplyDefaultScannerZgrab2SSHConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("subscribePorts", []string{"tcp/22"})
+	defaultConfig.SetDefault("timeout", "2500ms")
+	defaultConfig.SetDefault("ClientID", "SSH-2.0-Go-nray")
 	// TODO: Research valid / working / useful values for cryptographic primitives
-	config.SetDefault("KexAlgorithms", "")
-	config.SetDefault("HostKeyAlgorithms", "")
-	config.SetDefault("Ciphers", "")
-	config.SetDefault("CollectUserAuth", true)
-	config.SetDefault("GexMinBits", 1024)
-	config.SetDefault("GexMaxBits", 8192)
-	config.SetDefault("GexPreferredBits", 2048)
-	config.SetDefault("Verbose", false)
+	defaultConfig.SetDefault("KexAlgorithms", "")
+	defaultConfig.SetDefault("HostKeyAlgorithms", "")
+	defaultConfig.SetDefault("Ciphers", "")
+	defaultConfig.SetDefault("CollectUserAuth", true)
+	defaultConfig.SetDefault("GexMinBits", 1024)
+	defaultConfig.SetDefault("GexMaxBits", 8192)
+	defaultConfig.SetDefault("GexPreferredBits", 2048)
+	defaultConfig.SetDefault("Verbose", false)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-// CreateDefaultScannerZgrab2HTTPConfig is called when Zgrab HTTP is initialized
-func CreateDefaultScannerZgrab2HTTPConfig(config *viper.Viper) {
-	config.SetDefault("subscribeHTTPPorts", []string{"tcp/80", "tcp/8080", "tcp/8000"})
-	config.SetDefault("subscribeHTTPPorts", []string{"tcp/443", "tcp/8443"})
-	config.SetDefault("timeout", "2500ms")
-	config.SetDefault("method", "GET")
-	config.SetDefault("endpoint", "/")
-	config.SetDefault("userAgent", "nray")
-	config.SetDefault("retryHTTPS", false)
-	config.SetDefault("maxSize", 256)
-	config.SetDefault("maxRedirects", 2)
-	createDefaultScannerZgrab2HTTPTlsConfig(config)
-}
-
-func createDefaultScannerZgrab2HTTPTlsConfig(config *viper.Viper) {
+// ApplyDefaultScannerZgrab2HTTPConfig is called when Zgrab HTTP is initialized
+func ApplyDefaultScannerZgrab2HTTPConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("subscribeHTTPPorts", []string{"tcp/80", "tcp/8080", "tcp/8000"})
+	defaultConfig.SetDefault("subscribeHTTPSPorts", []string{"tcp/443", "tcp/8443"})
+	defaultConfig.SetDefault("timeout", "2500ms")
+	defaultConfig.SetDefault("method", "GET")
+	defaultConfig.SetDefault("endpoint", "/")
+	defaultConfig.SetDefault("userAgent", "nray")
+	defaultConfig.SetDefault("retryHTTPS", false)
+	defaultConfig.SetDefault("maxSize", 256)
+	defaultConfig.SetDefault("maxRedirects", 2)
 	// TODO: Research valid / working / useful values for cryptographic primitives
-	config.SetDefault("heartbleed", true)
-	config.SetDefault("sessionTicket", true)
-	config.SetDefault("extendedMasterSecret", true)
-	config.SetDefault("extendedRandom", true)
-	config.SetDefault("noSNI", false)
-	config.SetDefault("sctExt", false)
-	config.SetDefault("keepClientLogs", false)
-	config.SetDefault("verifyServerCertificate", false)
-	config.SetDefault("minVersion", 0)
-	config.SetDefault("maxVersion", 0)
-	config.SetDefault("noECDHE", false)
-	config.SetDefault("heartbeatEnabled", true)
-	config.SetDefault("dsaEnabled", true)
+	defaultConfig.SetDefault("heartbleed", true)
+	defaultConfig.SetDefault("sessionTicket", true)
+	defaultConfig.SetDefault("extendedMasterSecret", true)
+	defaultConfig.SetDefault("extendedRandom", true)
+	defaultConfig.SetDefault("noSNI", false)
+	defaultConfig.SetDefault("sctExt", false)
+	defaultConfig.SetDefault("keepClientLogs", false)
+	defaultConfig.SetDefault("verifyServerCertificate", false)
+	defaultConfig.SetDefault("minVersion", 0)
+	defaultConfig.SetDefault("maxVersion", 0)
+	defaultConfig.SetDefault("noECDHE", false)
+	defaultConfig.SetDefault("heartbeatEnabled", true)
+	defaultConfig.SetDefault("dsaEnabled", true)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-func CreateDefaultEventTerminalConfig(config *viper.Viper) {
-	config.SetDefault("enabled", true)
-	createDefaultEventTerminalFilterConfig(config)
-	createDefaultEventTerminalInternalConfig(config)
+// ApplyDefaultEventTerminalConfig is called when the TerminalEventHandler is initialized
+func ApplyDefaultEventTerminalConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("filter.environment", "")
+	defaultConfig.SetDefault("filter.portscan.open", true)
+	defaultConfig.SetDefault("internal.channelsize", 1000)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-func createDefaultEventTerminalFilterConfig(config *viper.Viper) {
-	config.SetDefault("filter.environment", "")
-	config.SetDefault("filter.portscan.open", true)
+// ApplyDefaultEventJSONFileConfig is called when the JSONFileEventHandler is initialized
+func ApplyDefaultEventJSONFileConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("filename", "nray-output.json")
+	defaultConfig.SetDefault("overwriteExisting", false)
+	defaultConfig.SetDefault("internal.channelsize", 10000)
+	defaultConfig.SetDefault("internal.synctimer", 10*time.Second)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-func createDefaultEventTerminalInternalConfig(config *viper.Viper) {
-	config.SetDefault("internal.channelsize", 1000)
-}
-
-func CreateDefaultEventJSONFileConfig(config *viper.Viper) {
-	config.SetDefault("enabled", true)
-	config.SetDefault("filename", "nray-output.json")
-	config.SetDefault("overwriteExisting", false)
-	createDefaultEventJSONFileInternalConfig(config)
-}
-
-func createDefaultEventJSONFileInternalConfig(config *viper.Viper) {
-	config.SetDefault("internal.channelsize", 10000)
-	config.SetDefault("internal.synctimer", 10*time.Second)
-}
-
-func CreateDefaultEventElasticsearchConfig(config *viper.Viper) {
-	config.SetDefault("enabled", false)
-	config.SetDefault("useTLS", true)
-	config.SetDefault("port", 443)
-	createDefaultEventElasticsearchInternalConfig(config)
-}
-
-func createDefaultEventElasticsearchInternalConfig(config *viper.Viper) {
-	config.SetDefault("internal.indexname", "nray")
-	config.SetDefault("internal.channelsize", 10000)
-	config.SetDefault("internal.committimer", 3)
+// ApplyDefaultEventElasticsearchConfig is called when the ElasticsearchEventHandler is initialized
+func ApplyDefaultEventElasticsearchConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("useTLS", true)
+	defaultConfig.SetDefault("port", 443)
+	defaultConfig.SetDefault("internal.indexname", "nray")
+	defaultConfig.SetDefault("internal.channelsize", 10000)
+	defaultConfig.SetDefault("internal.committimer", 3)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
