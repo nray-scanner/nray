@@ -84,13 +84,11 @@ func InitGlobalServerConfig() error {
 	CurrentConfig.EventHandlers = make([]events.EventHandler, 0)
 	for _, eventHandlerName := range events.RegisteredHandlers {
 		configPath := fmt.Sprintf("events.%s", eventHandlerName)
-		if viper.IsSet(fmt.Sprintf("%s.enabled", configPath)) {
-			if viper.GetBool(fmt.Sprintf("%s.enabled", configPath)) {
-				handler := events.GetEventHandler(eventHandlerName)
-				err := handler.Configure(viper.Sub(configPath))
-				utils.CheckError(err, true)
-				CurrentConfig.EventHandlers = append(CurrentConfig.EventHandlers, handler)
-			}
+		if viper.IsSet(configPath) {
+			handler := events.GetEventHandler(eventHandlerName)
+			err := handler.Configure(viper.Sub(configPath))
+			utils.CheckError(err, true)
+			CurrentConfig.EventHandlers = append(CurrentConfig.EventHandlers, handler)
 		}
 	}
 	return nil
@@ -130,7 +128,11 @@ mainloop:
 			for _, handler := range currentConfig.EventHandlers {
 				handler.ProcessEvents([]*nraySchema.Event{skeleton.GetNodeRegister().Envinfo})
 			}
-			registeredNode.Scannerconfig, err = json.Marshal(viper.Sub("scannerconfig").AllSettings())
+			if viper.IsSet("scannerconfig") {
+				registeredNode.Scannerconfig, err = json.Marshal(viper.Sub("scannerconfig").AllSettings())
+			} else {
+				registeredNode.Scannerconfig = nil
+			}
 			utils.CheckError(err, false)
 			serverMessage := &nraySchema.NrayServerMessage{
 				MessageContent: &nraySchema.NrayServerMessage_RegisteredNode{

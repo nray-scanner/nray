@@ -149,7 +149,6 @@ scannerconfig:
 # Everything in the event node controls if and how data is written
 events:
   terminal:
-    enabled: true
     # Any matching filter is going to be printed
     filter: 
       environment: # empty filter is printed if a element of this type exists
@@ -158,7 +157,6 @@ events:
     internal:
       channelsize: 1000
   json-file: 
-    enabled: true 
     filename: "nray-output.json"
     # If set to false, overwriteExisting will prevent nray to overwrite
     # any existing output file. 
@@ -167,7 +165,6 @@ events:
       channelsize: 10000 # Internal event buffer
       synctimer: 10s # flush interval
   elasticsearch:
-    enabled: false
     # FQDN or IP of elasticsearch instance
     server: "elasticsearch.local"
     # specifies if HTTPS is used
