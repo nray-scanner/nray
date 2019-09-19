@@ -14,26 +14,26 @@ func TestApplyDefaultScannerConfig(t *testing.T) {
 	// Test passing nil to the function
 	result = utils.ApplyDefaultScannerConfig(nil)
 	if !result.IsSet("workers") || result.GetUint("workers") != 250 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("ratelimit") || result.GetString("ratelimit") != "none" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("zgrab2.enabledModules") {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 
 	// Test passing an empty viper to the function
 	emptyViper := viper.New()
 	result = utils.ApplyDefaultScannerConfig(emptyViper)
 	if !result.IsSet("workers") || result.GetUint("workers") != 250 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("ratelimit") || result.GetString("ratelimit") != "none" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("zgrab2.enabledModules") {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 
 	// Pass a viper with a value explicitly set. The value mustn't change.
@@ -42,13 +42,13 @@ func TestApplyDefaultScannerConfig(t *testing.T) {
 	viperWithValue.Set("ratelimit", 25)
 	result = utils.ApplyDefaultScannerConfig(viperWithValue)
 	if !result.IsSet("workers") || result.GetUint("workers") != 1000 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("ratelimit") || result.GetFloat64("ratelimit") != 25 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("zgrab2.enabledModules") {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 }
 
@@ -58,14 +58,14 @@ func TestApplyDefaultScannerTCPConfig(t *testing.T) {
 	// Test passing nil to the function
 	result = utils.ApplyDefaultScannerTCPConfig(nil)
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != (2500*time.Millisecond) {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 
 	// Test passing an empty viper to the function
 	emptyViper := viper.New()
 	result = utils.ApplyDefaultScannerTCPConfig(emptyViper)
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != (2500*time.Millisecond) {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 
 	// Pass a viper with a value explicitly set. The value mustn't change.
@@ -73,7 +73,7 @@ func TestApplyDefaultScannerTCPConfig(t *testing.T) {
 	viperWithValue.Set("timeout", "1500ms")
 	result = utils.ApplyDefaultScannerTCPConfig(viperWithValue)
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != (1500*time.Millisecond) {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 }
 
@@ -83,26 +83,26 @@ func TestApplyDefaultScannerUDPConfig(t *testing.T) {
 	// Test passing nil to the function
 	result = utils.ApplyDefaultScannerUDPConfig(nil)
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != (2500*time.Millisecond) {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("fast") || result.GetBool("fast") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("defaultHexPayload") || result.GetString("defaultHexPayload") != "\x6e\x72\x61\x79" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 
 	// Test passing an empty viper to the function
 	emptyViper := viper.New()
 	result = utils.ApplyDefaultScannerUDPConfig(emptyViper)
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != (2500*time.Millisecond) {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("fast") || result.GetBool("fast") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("defaultHexPayload") || result.GetString("defaultHexPayload") != "\x6e\x72\x61\x79" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 
 	// Pass a viper with a value explicitly set. The value mustn't change.
@@ -111,13 +111,13 @@ func TestApplyDefaultScannerUDPConfig(t *testing.T) {
 	viperWithValue.Set("fast", true)
 	result = utils.ApplyDefaultScannerUDPConfig(viperWithValue)
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != (1500*time.Millisecond) {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("fast") || result.GetBool("fast") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("defaultHexPayload") || result.GetString("defaultHexPayload") != "\x6e\x72\x61\x79" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 }
 
@@ -127,74 +127,74 @@ func TestApplyDefaultScannerZgrab2SSHConfig(t *testing.T) {
 	// Test passing nil to the function
 	result = utils.ApplyDefaultScannerZgrab2SSHConfig(nil)
 	if !result.IsSet("subscribePorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != 2500*time.Millisecond {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("ClientID") || result.GetString("ClientID") != "SSH-2.0-Go-nray" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("KexAlgorithms") || result.GetString("KexAlgorithms") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("HostKeyAlgorithms") || result.GetString("HostKeyAlgorithms") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("Ciphers") || result.GetString("Ciphers") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("CollectUserAuth") || result.GetBool("CollectUserAuth") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("GexMinBits") || result.GetUint("GexMinBits") != 1024 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("GexMaxBits") || result.GetUint("GexMaxBits") != 8192 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("GexPreferredBits") || result.GetUint("GexPreferredBits") != 2048 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("Verbose") || result.GetBool("Verbose") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 
 	// Test passing an empty viper to the function
 	emptyViper := viper.New()
 	result = utils.ApplyDefaultScannerZgrab2SSHConfig(emptyViper)
 	if !result.IsSet("subscribePorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != 2500*time.Millisecond {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("ClientID") || result.GetString("ClientID") != "SSH-2.0-Go-nray" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("KexAlgorithms") || result.GetString("KexAlgorithms") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("HostKeyAlgorithms") || result.GetString("HostKeyAlgorithms") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("Ciphers") || result.GetString("Ciphers") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("CollectUserAuth") || result.GetBool("CollectUserAuth") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("GexMinBits") || result.GetUint("GexMinBits") != 1024 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("GexMaxBits") || result.GetUint("GexMaxBits") != 8192 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("GexPreferredBits") || result.GetUint("GexPreferredBits") != 2048 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("Verbose") || result.GetBool("Verbose") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 
 	// Pass a viper with a value explicitly set. The value mustn't change.
@@ -205,37 +205,37 @@ func TestApplyDefaultScannerZgrab2SSHConfig(t *testing.T) {
 
 	result = utils.ApplyDefaultScannerZgrab2SSHConfig(viperWithValue)
 	if !result.IsSet("subscribePorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != 400*time.Millisecond {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("ClientID") || result.GetString("ClientID") != "SSH-2.0-Go-nray" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("KexAlgorithms") || result.GetString("KexAlgorithms") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("HostKeyAlgorithms") || result.GetString("HostKeyAlgorithms") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("Ciphers") || result.GetString("Ciphers") != "" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("CollectUserAuth") || result.GetBool("CollectUserAuth") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("GexMinBits") || result.GetUint("GexMinBits") != 1024 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("GexMaxBits") || result.GetUint("GexMaxBits") != 8192 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("GexPreferredBits") || result.GetUint("GexPreferredBits") != 2048 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("Verbose") || result.GetBool("Verbose") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 }
 
@@ -245,140 +245,140 @@ func TestApplyDefaultScannerZgrab2HTTPConfig(t *testing.T) {
 	// Test passing nil to the function
 	result = utils.ApplyDefaultScannerZgrab2HTTPConfig(nil)
 	if !result.IsSet("subscribeHTTPPorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("subscribeHTTPSPorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != 2500*time.Millisecond {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("method") || result.GetString("method") != "GET" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("endpoint") || result.GetString("endpoint") != "/" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("userAgent") || result.GetString("userAgent") != "nray" {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("retryHTTPS") || result.GetBool("retryHTTPS") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("maxSize") || result.GetUint("maxSize") != 256 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("maxRedirects") || result.GetUint("maxRedirects") != 2 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("heartbleed") || result.GetBool("heartbleed") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("sessionTicket") || result.GetBool("sessionTicket") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("extendedMasterSecret") || result.GetBool("extendedMasterSecret") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("extendedRandom") || result.GetBool("extendedRandom") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("noSNI") || result.GetBool("noSNI") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("sctExt") || result.GetBool("sctExt") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("keepClientLogs") || result.GetBool("keepClientLogs") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("verifyServerCertificate") || result.GetBool("verifyServerCertificate") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("minVersion") || result.GetUint("minVersion") != 0 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("maxVersion") || result.GetUint("maxVersion") != 0 {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("noECDHE") || result.GetBool("noECDHE") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("heartbeatEnabled") || result.GetBool("heartbeatEnabled") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 	if !result.IsSet("dsaEnabled") || result.GetBool("dsaEnabled") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing nil to config")
 	}
 
 	// Test passing an empty viper to the function
 	emptyViper := viper.New()
 	result = utils.ApplyDefaultScannerZgrab2HTTPConfig(emptyViper)
 	if !result.IsSet("subscribeHTTPPorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("subscribeHTTPSPorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != 2500*time.Millisecond {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("method") || result.GetString("method") != "GET" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("endpoint") || result.GetString("endpoint") != "/" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("userAgent") || result.GetString("userAgent") != "nray" {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("retryHTTPS") || result.GetBool("retryHTTPS") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("maxSize") || result.GetUint("maxSize") != 256 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("maxRedirects") || result.GetUint("maxRedirects") != 2 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("heartbleed") || result.GetBool("heartbleed") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("sessionTicket") || result.GetBool("sessionTicket") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("extendedMasterSecret") || result.GetBool("extendedMasterSecret") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("extendedRandom") || result.GetBool("extendedRandom") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("noSNI") || result.GetBool("noSNI") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("sctExt") || result.GetBool("sctExt") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("keepClientLogs") || result.GetBool("keepClientLogs") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("verifyServerCertificate") || result.GetBool("verifyServerCertificate") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("minVersion") || result.GetUint("minVersion") != 0 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("maxVersion") || result.GetUint("maxVersion") != 0 {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("noECDHE") || result.GetBool("noECDHE") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("heartbeatEnabled") || result.GetBool("heartbeatEnabled") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("dsaEnabled") || result.GetBool("dsaEnabled") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing empty viper to config")
 	}
 
 	// Pass a viper with a value explicitly set. The value mustn't change.
@@ -389,69 +389,228 @@ func TestApplyDefaultScannerZgrab2HTTPConfig(t *testing.T) {
 	viperWithValue.Set("heartbleed", false)
 	result = utils.ApplyDefaultScannerZgrab2HTTPConfig(viperWithValue)
 	if !result.IsSet("subscribeHTTPPorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("subscribeHTTPSPorts") {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("timeout") || result.GetDuration("timeout") != 1000*time.Millisecond {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("method") || result.GetString("method") != "GET" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("endpoint") || result.GetString("endpoint") != "/index.php" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("userAgent") || result.GetString("userAgent") != "nray" {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("retryHTTPS") || result.GetBool("retryHTTPS") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("maxSize") || result.GetUint("maxSize") != 256 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("maxRedirects") || result.GetUint("maxRedirects") != 2 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("heartbleed") || result.GetBool("heartbleed") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("sessionTicket") || result.GetBool("sessionTicket") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("extendedMasterSecret") || result.GetBool("extendedMasterSecret") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("extendedRandom") || result.GetBool("extendedRandom") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("noSNI") || result.GetBool("noSNI") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("sctExt") || result.GetBool("sctExt") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("keepClientLogs") || result.GetBool("keepClientLogs") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("verifyServerCertificate") || result.GetBool("verifyServerCertificate") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("minVersion") || result.GetUint("minVersion") != 0 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("maxVersion") || result.GetUint("maxVersion") != 0 {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("noECDHE") || result.GetBool("noECDHE") != false {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("heartbeatEnabled") || result.GetBool("heartbeatEnabled") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 	if !result.IsSet("dsaEnabled") || result.GetBool("dsaEnabled") != true {
-		t.Fail()
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+}
+
+func TestApplyDefaultEventTerminalConfig(t *testing.T) {
+	var result *viper.Viper
+
+	// Test passing nil to the function
+	result = utils.ApplyDefaultEventTerminalConfig(nil)
+	if !result.IsSet("filter.environment") || result.GetString("filter.environment") != "" {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("filter.portscan.open") || result.GetBool("filter.portscan.open") != true {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 1000 {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+
+	// Test passing an empty viper to the function
+	emptyViper := viper.New()
+	result = utils.ApplyDefaultEventTerminalConfig(emptyViper)
+	if !result.IsSet("filter.environment") || result.GetString("filter.environment") != "" {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("filter.portscan.open") || result.GetBool("filter.portscan.open") != true {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 1000 {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+
+	// Pass a viper with a value explicitly set. The value mustn't change.
+	viperWithValue := viper.New()
+	viperWithValue.Set("filter.portscan.open", false)
+	viperWithValue.Set("internal.channelsize", 1500)
+	result = utils.ApplyDefaultEventTerminalConfig(viperWithValue)
+	if !result.IsSet("filter.environment") || result.GetString("filter.environment") != "" {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("filter.portscan.open") || result.GetBool("filter.portscan.open") != false {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 1500 {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+}
+
+func TestApplyDefaultEventJSONFileConfig(t *testing.T) {
+	var result *viper.Viper
+
+	// Test passing nil to the function
+	result = utils.ApplyDefaultEventJSONFileConfig(nil)
+	if !result.IsSet("filename") || result.GetString("filename") != "nray-output.json" {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("overwriteExisting") || result.GetBool("overwriteExisting") != false {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 10000 {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("internal.synctimer") || result.GetDuration("internal.synctimer") != 10*time.Second {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+
+	// Test passing an empty viper to the function
+	emptyViper := viper.New()
+	result = utils.ApplyDefaultEventJSONFileConfig(emptyViper)
+	if !result.IsSet("filename") || result.GetString("filename") != "nray-output.json" {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("overwriteExisting") || result.GetBool("overwriteExisting") != false {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 10000 {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("internal.synctimer") || result.GetDuration("internal.synctimer") != 10*time.Second {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+
+	// Pass a viper with a value explicitly set. The value mustn't change.
+	viperWithValue := viper.New()
+	viperWithValue.Set("filename", "top25.json")
+	viperWithValue.Set("overwriteExisting", true)
+	result = utils.ApplyDefaultEventJSONFileConfig(viperWithValue)
+	if !result.IsSet("filename") || result.GetString("filename") != "top25.json" {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("overwriteExisting") || result.GetBool("overwriteExisting") != true {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 10000 {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("internal.synctimer") || result.GetDuration("internal.synctimer") != 10*time.Second {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+}
+
+func TestDefaultEventElasticsearchConfig(t *testing.T) {
+	var result *viper.Viper
+
+	// Test passing nil to the function
+	result = utils.ApplyDefaultEventElasticsearchConfig(nil)
+	if !result.IsSet("useTLS") || result.GetBool("useTLS") != true {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("port") || result.GetUint("port") != 443 {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("internal.indexname") || result.GetString("internal.indexname") != "nray" {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 10000 {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+	if !result.IsSet("internal.committimer") || result.GetUint("internal.committimer") != 3 {
+		t.Errorf("Test failed: Passing nil to config")
+	}
+
+	// Test passing an empty viper to the function
+	emptyViper := viper.New()
+	result = utils.ApplyDefaultEventElasticsearchConfig(emptyViper)
+	if !result.IsSet("useTLS") || result.GetBool("useTLS") != true {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("port") || result.GetUint("port") != 443 {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("internal.indexname") || result.GetString("internal.indexname") != "nray" {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 10000 {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("internal.committimer") || result.GetUint("internal.committimer") != 3 {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+
+	// Pass a viper with a value explicitly set. The value mustn't change.
+	viperWithValue := viper.New()
+	viperWithValue.Set("useTLS", false)
+	viperWithValue.Set("port", 8443)
+	result = utils.ApplyDefaultEventElasticsearchConfig(viperWithValue)
+	if !result.IsSet("useTLS") || result.GetBool("useTLS") != false {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("port") || result.GetUint("port") != 8443 {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("internal.indexname") || result.GetString("internal.indexname") != "nray" {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 10000 {
+		t.Errorf("Test failed: Passing changed value to config")
+	}
+	if !result.IsSet("internal.committimer") || result.GetUint("internal.committimer") != 3 {
+		t.Errorf("Test failed: Passing changed value to config")
 	}
 }
