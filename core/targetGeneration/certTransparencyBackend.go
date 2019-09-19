@@ -25,6 +25,7 @@ type certificateTransparencyBackend struct {
 }
 
 func (ct *certificateTransparencyBackend) configure(conf *viper.Viper) error {
+	conf = utils.ApplyDefaultTargetgeneratorCertificatetransparencyConfig(conf)
 	ct.rawConfig = conf
 	log.WithFields(log.Fields{
 		"module": "targetgeneration.certTransparencyBackend",

@@ -6,81 +6,87 @@ import (
 	"github.com/spf13/viper"
 )
 
-// CreateDefaultConfig is the place where all default config values
-// are defined and initialized
-// Each sublevel of configuration should initialized in its own function
-func CreateDefaultConfig() {
-	viper.SetDefault("debug", false)
-	viper.SetDefault("listen", []string{"8601"})
-	viper.SetDefault("host", "127.0.0.1")
-	createDefaultTLSConfig()
-	viper.SetDefault("pools", 1)
-	viper.SetDefault("considerClientPoolPreference", true)
-	createDefaultInternalConfig()
-	createDefaultTargetgeneratorConfig()
-
+// ApplyDefaultConfig initializes top level configuration
+// and some options that fit best here
+func ApplyDefaultConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("debug", false)
+	defaultConfig.SetDefault("listen", []string{"8601"})
+	defaultConfig.SetDefault("host", "127.0.0.1")
+	defaultConfig.SetDefault("TLS.enabled", false)
+	defaultConfig.SetDefault("TLS.CA", "")
+	defaultConfig.SetDefault("TLS.cert", "")
+	defaultConfig.SetDefault("TLS.key", "")
+	defaultConfig.SetDefault("TLS.forceClientAuth", false)
+	defaultConfig.SetDefault("pools", 1)
+	defaultConfig.SetDefault("considerClientPoolPreference", true)
+	defaultConfig.SetDefault("internal.nodeExpiryTime", 30)
+	defaultConfig.SetDefault("internal.nodeExpiryCheckInterval", 10)
+	defaultConfig.SetDefault("targetgenerator.bufferSize", 5)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-func createDefaultTLSConfig() {
-	viper.SetDefault("TLS.enabled", false)
-	viper.SetDefault("TLS.CA", "")
-	viper.SetDefault("TLS.cert", "")
-	viper.SetDefault("TLS.key", "")
-	viper.SetDefault("TLS.forceClientAuth", false)
+// ApplyDefaultTargetgeneratorStandardConfig sets default values for standard target generator
+func ApplyDefaultTargetgeneratorStandardConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("enabled", false)
+	defaultConfig.SetDefault("targets", []string{""})
+	defaultConfig.SetDefault("targetFile", "")
+	defaultConfig.SetDefault("tcpports", []string{"top25"})
+	defaultConfig.SetDefault("udpports", []string{"top25"})
+	defaultConfig.SetDefault("blacklist", []string{""})
+	defaultConfig.SetDefault("blacklistFile", "")
+	defaultConfig.SetDefault("maxHostsPerBatch", 150)
+	defaultConfig.SetDefault("maxTcpPortsPerBatch", 25)
+	defaultConfig.SetDefault("maxUdpPortsPerBatch", 25)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-func createDefaultInternalConfig() {
-	viper.SetDefault("internal.nodeExpiryTime", 30)
-	viper.SetDefault("internal.nodeExpiryCheckInterval", 10)
+// ApplyDefaultTargetgeneratorCertificatetransparencyConfig sets default values for certificate transparency target generator
+func ApplyDefaultTargetgeneratorCertificatetransparencyConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("enabled", false)
+	defaultConfig.SetDefault("domainRegex", "^.*$")
+	defaultConfig.SetDefault("tcpports", []string{"top25"})
+	defaultConfig.SetDefault("udpports", []string{"top25"})
+	defaultConfig.SetDefault("blacklist", []string{""})
+	defaultConfig.SetDefault("maxHostsPerBatch", 150)
+	defaultConfig.SetDefault("maxTcpPortsPerBatch", 25)
+	defaultConfig.SetDefault("maxUdpPortsPerBatch", 25)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
-func createDefaultTargetgeneratorConfig() {
-	viper.SetDefault("targetgenerator.bufferSize", 5)
-	createDefaultTargetgeneratorStandardConfig()
-	createDefaultTargetgeneratorCertificatetransparencyConfig()
-	createDefaultTargetgeneratorLDAPConfig()
-}
-
-func createDefaultTargetgeneratorStandardConfig() {
-	viper.SetDefault("standard.enabled", false)
-	viper.SetDefault("standard.targets", []string{""})
-	viper.SetDefault("standard.targetFile", "")
-	viper.SetDefault("standard.tcpports", []string{"top25"})
-	viper.SetDefault("standard.udpports", []string{"top25"})
-	viper.SetDefault("standard.blacklist", []string{""})
-	viper.SetDefault("standard.blacklistFile", "")
-	viper.SetDefault("standard.maxHostsPerBatch", 150)
-	viper.SetDefault("standard.maxTcpPortsPerBatch", 25)
-	viper.SetDefault("standard.maxUdpPortsPerBatch", 25)
-}
-
-func createDefaultTargetgeneratorCertificatetransparencyConfig() {
-	viper.SetDefault("certificatetransparency.enabled", false)
-	viper.SetDefault("certificatetransparency.domainRegex", "^.*$")
-	viper.SetDefault("certificatetransparency.tcpports", []string{"top25"})
-	viper.SetDefault("certificatetransparency.udpports", []string{"top25"})
-	viper.SetDefault("certificatetransparency.blacklist", []string{""})
-	viper.SetDefault("certificatetransparency.maxHostsPerBatch", 150)
-	viper.SetDefault("certificatetransparency.maxTcpPortsPerBatch", 25)
-	viper.SetDefault("certificatetransparency.maxUdpPortsPerBatch", 25)
-}
-
-func createDefaultTargetgeneratorLDAPConfig() {
-	viper.SetDefault("ldap.enabled", false)
-	viper.SetDefault("ldap.ldapSearchString", "(objectCategory=computer)")
-	viper.SetDefault("ldap.baseDN", "dc=contoso,dc=com")
-	viper.SetDefault("ldap.ldapAttribute", "dNSHostName")
-	viper.SetDefault("ldap.ldapServer", "")
-	viper.SetDefault("ldap.ldapPort", 636)
-	viper.SetDefault("ldap.insecure", false)
-	viper.SetDefault("ldap.ldapUser", "")
-	viper.SetDefault("ldap.ldapPass", "")
-	viper.SetDefault("ldap.tcpports", []string{"top25"})
-	viper.SetDefault("ldap.udpports", []string{"top25"})
-	viper.SetDefault("ldap.blacklist", []string{""})
-	viper.SetDefault("ldap.maxHostsPerBatch", 5)
-	viper.SetDefault("ldap.maxTcpPortsPerBatch", 25)
-	viper.SetDefault("ldap.maxUdpPortsPerBatch", 25)
+// ApplyDefaultTargetgeneratorLDAPConfig sets default values for ldap target generator
+func ApplyDefaultTargetgeneratorLDAPConfig(config *viper.Viper) *viper.Viper {
+	defaultConfig := viper.New()
+	defaultConfig.SetDefault("enabled", false)
+	defaultConfig.SetDefault("ldapSearchString", "(objectCategory=computer)")
+	defaultConfig.SetDefault("baseDN", "dc=contoso,dc=com")
+	defaultConfig.SetDefault("ldapAttribute", "dNSHostName")
+	defaultConfig.SetDefault("ldapServer", "")
+	defaultConfig.SetDefault("ldapPort", 636)
+	defaultConfig.SetDefault("insecure", false)
+	defaultConfig.SetDefault("ldapUser", "")
+	defaultConfig.SetDefault("ldapPass", "")
+	defaultConfig.SetDefault("tcpports", []string{"top25"})
+	defaultConfig.SetDefault("udpports", []string{"top25"})
+	defaultConfig.SetDefault("blacklist", []string{""})
+	defaultConfig.SetDefault("maxHostsPerBatch", 5)
+	defaultConfig.SetDefault("maxTcpPortsPerBatch", 25)
+	defaultConfig.SetDefault("maxUdpPortsPerBatch", 25)
+	if config != nil {
+		defaultConfig.MergeConfigMap(config.AllSettings())
+	}
+	return defaultConfig
 }
 
 // ApplyDefaultScannerConfig is called when the node applies the configuration sent

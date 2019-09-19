@@ -31,6 +31,7 @@ type ldapBackend struct {
 }
 
 func (ldapBack *ldapBackend) configure(conf *viper.Viper) error {
+	conf = utils.ApplyDefaultTargetgeneratorLDAPConfig(conf)
 	ldapBack.rawConfig = conf
 	log.WithFields(log.Fields{
 		"module": "targetgeneration.ldapBackend",

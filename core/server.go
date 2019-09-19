@@ -33,11 +33,13 @@ import (
 // CurrentConfig is the initialized struct containing
 // the configuration
 var CurrentConfig GlobalConfig
+var externalConfig *viper.Viper
 
 // InitGlobalServerConfig initializes the GlobalConfig
 // from the values provided by viper
-func InitGlobalServerConfig() error {
-	if viper.GetBool("debug") {
+func InitGlobalServerConfig(config *viper.Viper) error {
+	externalConfig = config
+	if externalConfig.GetBool("debug") {
 		log.SetLevel(log.DebugLevel)
 		log.SetFormatter(&utils.Formatter{
 			HideKeys: true,
@@ -45,7 +47,7 @@ func InitGlobalServerConfig() error {
 	}
 
 	// Init ports
-	portsToListen := viper.GetStringSlice("listen")
+	portsToListen := externalConfig.GetStringSlice("listen")
 	if len(portsToListen) == 0 || portsToListen == nil {
 		return fmt.Errorf("No port to bind to was given")
 	}
@@ -57,18 +59,18 @@ func InitGlobalServerConfig() error {
 	}
 
 	// Init host configuration
-	host := viper.GetString("host")
+	host := externalConfig.GetString("host")
 	CurrentConfig = GlobalConfig{ListenPorts: portList, ListenHost: host}
 
 	// Init TLS
-	if viper.GetBool("TLS.enabled") {
-		cert, err := tls.LoadX509KeyPair(viper.GetString("TLS.cert"), viper.GetString("TLS.key"))
+	if externalConfig.GetBool("TLS.enabled") {
+		cert, err := tls.LoadX509KeyPair(externalConfig.GetString("TLS.cert"), externalConfig.GetString("TLS.key"))
 		utils.CheckError(err, true)
 		CurrentConfig.TLSConfig = &tls.Config{Certificates: []tls.Certificate{cert}}
 		CurrentConfig.TLSConfig.Rand = rand.Reader
 		CurrentConfig.TLSConfig.BuildNameToCertificate()
-		if viper.GetBool("TLS.forceClientAuth") {
-			caCert, err := ioutil.ReadFile(viper.GetString("TLS.CA"))
+		if externalConfig.GetBool("TLS.forceClientAuth") {
+			caCert, err := ioutil.ReadFile(externalConfig.GetString("TLS.CA"))
 			utils.CheckError(err, true)
 			caCertPool := x509.NewCertPool()
 			caCertPool.AppendCertsFromPEM(caCert)
@@ -78,15 +80,15 @@ func InitGlobalServerConfig() error {
 	}
 
 	// Init pool configuration
-	CurrentConfig.Pools = make([]*Pool, viper.GetInt("pools"))
+	CurrentConfig.Pools = make([]*Pool, externalConfig.GetInt("pools"))
 
 	// Init event handlers
 	CurrentConfig.EventHandlers = make([]events.EventHandler, 0)
 	for _, eventHandlerName := range events.RegisteredHandlers {
 		configPath := fmt.Sprintf("events.%s", eventHandlerName)
-		if viper.IsSet(configPath) {
+		if externalConfig.IsSet(configPath) {
 			handler := events.GetEventHandler(eventHandlerName)
-			err := handler.Configure(viper.Sub(configPath))
+			err := handler.Configure(externalConfig.Sub(configPath))
 			utils.CheckError(err, true)
 			CurrentConfig.EventHandlers = append(CurrentConfig.EventHandlers, handler)
 		}
@@ -124,12 +126,12 @@ mainloop:
 		// Here are all incoming messages processed
 		switch skeleton.MessageContent.(type) {
 		case *nraySchema.NrayNodeMessage_NodeRegister:
-			registeredNode := handleNodeRegister(skeleton.GetNodeRegister(), viper.GetBool("considerClientPoolPreference"), viper.GetBool("allowMultipleNodesPerHost"))
+			registeredNode := handleNodeRegister(skeleton.GetNodeRegister(), externalConfig.GetBool("considerClientPoolPreference"), externalConfig.GetBool("allowMultipleNodesPerHost"))
 			for _, handler := range currentConfig.EventHandlers {
 				handler.ProcessEvents([]*nraySchema.Event{skeleton.GetNodeRegister().Envinfo})
 			}
-			if viper.IsSet("scannerconfig") {
-				registeredNode.Scannerconfig, err = json.Marshal(viper.Sub("scannerconfig").AllSettings())
+			if externalConfig.IsSet("scannerconfig") {
+				registeredNode.Scannerconfig, err = json.Marshal(externalConfig.Sub("scannerconfig").AllSettings())
 			} else {
 				registeredNode.Scannerconfig = nil
 			}
@@ -270,13 +272,13 @@ func SendMessage(sock mangos.Socket, message *nraySchema.NrayServerMessage) {
 }
 
 func initPools() {
-	for i := 0; i < viper.GetInt("pools"); i++ {
+	for i := 0; i < externalConfig.GetInt("pools"); i++ {
 		CurrentConfig.Pools[i] = initPool()
 	}
 
 	// Create goroutines that clean up pools regularly
-	nodeExpiryTime := time.Duration(viper.GetInt("internal.nodeExpiryTime")) * time.Second
-	nodeExpiryCheckInterval := time.Duration(viper.GetInt("internal.nodeExpiryCheckInterval")) * time.Second
+	nodeExpiryTime := time.Duration(externalConfig.GetInt("internal.nodeExpiryTime")) * time.Second
+	nodeExpiryCheckInterval := time.Duration(externalConfig.GetInt("internal.nodeExpiryCheckInterval")) * time.Second
 	for _, pool := range CurrentConfig.Pools {
 		go removeExpiredNodes(pool, nodeExpiryCheckInterval, nodeExpiryTime)
 	}
@@ -284,7 +286,7 @@ func initPools() {
 	for _, pool := range CurrentConfig.Pools {
 		// Each pool has a target generator
 		targetGenerator := targetgeneration.TargetGenerator{}
-		targetGenerator.Init(viper.Sub("targetgenerator"))
+		targetGenerator.Init(externalConfig.Sub("targetgenerator"))
 		pool.TargetChan = targetGenerator.GetTargetChan()
 
 		// This goroutine creates jobs for each pool

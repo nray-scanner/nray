@@ -2,6 +2,7 @@ package targetgeneration
 
 import (
 	"net"
+	"strings"
 
 	"github.com/spf13/viper"
 
@@ -25,13 +26,14 @@ type standardTGBackend struct {
 
 // Configure is called to set up the generator
 func (generator *standardTGBackend) configure(conf *viper.Viper) error {
+	conf = utils.ApplyDefaultTargetgeneratorStandardConfig(conf)
 	generator.rawConfig = conf
 	generator.rawTargets = conf.GetStringSlice("targets")
 	generator.maxHosts = uint(conf.GetInt("maxHostsPerBatch"))
 	generator.maxTCPPorts = uint(conf.GetInt("maxTcpPortsPerBatch"))
 	generator.maxUDPPorts = uint(conf.GetInt("maxUdpPortsPerBatch"))
 
-	if conf.IsSet("targetFile") {
+	if conf.IsSet("targetFile") && strings.Trim(conf.GetString("targetFile"), " ") != "" {
 		targetHosts, err := utils.ReadFileLinesToStringSlice(conf.GetString("targetFile"))
 		utils.CheckError(err, false)
 		for _, target := range targetHosts {
@@ -43,7 +45,7 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 	for _, blacklistItem := range conf.GetStringSlice("blacklist") {
 		_ = generator.blacklist.AddToBlacklist(blacklistItem)
 	}
-	if conf.IsSet("blacklistFile") {
+	if conf.IsSet("blacklistFile") && strings.Trim(conf.GetString("blacklistFile"), " ") != "" {
 		blacklistHosts, err := utils.ReadFileLinesToStringSlice(conf.GetString("blacklistFile"))
 		utils.CheckError(err, false)
 		for _, blacklistItem := range blacklistHosts {
