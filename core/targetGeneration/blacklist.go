@@ -14,6 +14,7 @@ import (
 type NrayBlacklist struct {
 	ipBlacklist  *blacklist.Blacklist
 	dnsBlacklist *map[string]bool // value type not relevant, taking bool..
+	addressCount uint64
 }
 
 // NewBlacklist returns a new blacklist
@@ -48,12 +49,18 @@ func (blacklist *NrayBlacklist) AddToBlacklist(element string) uint64 {
 
 // AddNetToBlacklist adds a CIDR network range to the blacklist
 // <ip>/32 achieves the same for a single IP
-func (blacklist *NrayBlacklist) AddNetToBlacklist(net string) {
-	blacklist.ipBlacklist.AddEntry(net)
+func (blacklist *NrayBlacklist) AddNetToBlacklist(network string) {
+	_, parsedNet, err := net.ParseCIDR(network)
+	utils.CheckError(err, false)
+	blacklist.addressCount += cidr.AddressCount(parsedNet)
+	blacklist.ipBlacklist.AddEntry(network)
 }
 
 // AddDNSNameToBlacklist adds a FQDN to the blacklist
 func (blacklist *NrayBlacklist) AddDNSNameToBlacklist(dnsName string) {
+	if !(*blacklist.dnsBlacklist)[dnsName] {
+		blacklist.addressCount++
+	}
 	(*blacklist.dnsBlacklist)[dnsName] = true
 }
 
