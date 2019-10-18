@@ -80,7 +80,7 @@ func ApplyDefaultTargetgeneratorLDAPConfig(config *viper.Viper) *viper.Viper {
 	defaultConfig.SetDefault("tcpports", []string{"top25"})
 	defaultConfig.SetDefault("udpports", []string{"top25"})
 	defaultConfig.SetDefault("blacklist", []string{""})
-	defaultConfig.SetDefault("maxHostsPerBatch", 5)
+	defaultConfig.SetDefault("maxHostsPerBatch", 150)
 	defaultConfig.SetDefault("maxTcpPortsPerBatch", 25)
 	defaultConfig.SetDefault("maxUdpPortsPerBatch", 25)
 	if config != nil {
