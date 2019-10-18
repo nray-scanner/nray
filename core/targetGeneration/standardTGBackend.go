@@ -127,3 +127,9 @@ func (generator *standardTGBackend) receiveTargets() <-chan AnyTargets {
 
 	return resultChan
 }
+
+func (generator *standardTGBackend) targetCount() (uint64, error) {
+	allTargets := uint64(len(generator.rawTargets) * (len(generator.tcpPorts) + len(generator.udpPorts)))
+	blacklistedCount := generator.blacklist.addressCount * uint64(len(generator.tcpPorts)+len(generator.udpPorts))
+	return allTargets - blacklistedCount, nil
+}

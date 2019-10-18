@@ -112,6 +112,7 @@ outer:
 type targetGeneratorBackend interface {
 	configure(*viper.Viper) error
 	receiveTargets() <-chan AnyTargets
+	targetCount() (uint64, error)
 }
 
 // Taken from https://www.rosettacode.org/wiki/Remove_duplicate_elements#Map_solution

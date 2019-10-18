@@ -1,6 +1,7 @@
 package targetgeneration
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/nray-scanner/nray/utils"
@@ -91,4 +92,8 @@ func (ct *certificateTransparencyBackend) createTargets() {
 			ct.targetChan <- target
 		}
 	}
+}
+
+func (ct *certificateTransparencyBackend) targetCount() (uint64, error) {
+	return 0, fmt.Errorf("Targets from certificate transparency are a continuous stream")
 }

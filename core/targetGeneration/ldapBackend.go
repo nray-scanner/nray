@@ -115,3 +115,8 @@ func (ldapBack *ldapBackend) createTargets() {
 		}
 	}
 }
+
+func (ldapBack *ldapBackend) targetCount() (uint64, error) {
+	// TODO
+	return 0, fmt.Errorf("targetCount not implemented yet for LDAP")
+}
