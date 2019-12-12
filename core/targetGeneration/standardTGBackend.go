@@ -4,6 +4,7 @@ import (
 	"net"
 	"strings"
 
+	"github.com/apparentlymart/go-cidr/cidr"
 	"github.com/spf13/viper"
 
 	"github.com/nray-scanner/nray/utils"
@@ -14,14 +15,15 @@ import (
 // It generates single domain targets as well as IP targets
 // derived from networks using the ZMap algorithm
 type standardTGBackend struct {
-	rawConfig   *viper.Viper
-	rawTargets  []string
-	tcpPorts    []uint16
-	udpPorts    []uint16
-	maxHosts    uint
-	maxTCPPorts uint
-	maxUDPPorts uint
-	blacklist   *NrayBlacklist
+	rawConfig      *viper.Viper
+	rawTargetCount uint64
+	rawTargets     []string
+	tcpPorts       []uint16
+	udpPorts       []uint16
+	maxHosts       uint
+	maxTCPPorts    uint
+	maxUDPPorts    uint
+	blacklist      *NrayBlacklist
 }
 
 // Configure is called to set up the generator
@@ -56,6 +58,19 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 	generator.tcpPorts = ParsePorts(conf.GetStringSlice("tcpports"), "tcp")
 	generator.udpPorts = ParsePorts(conf.GetStringSlice("udpports"), "udp")
 
+	// Count targets
+	for _, rawTarget := range generator.rawTargets {
+		if ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
+			_, ipnet, err := net.ParseCIDR(rawTarget)
+			utils.CheckError(err, true)
+			generator.rawTargetCount += cidr.AddressCount(ipnet)
+		} else if ipv4Regexpr.MatchString(rawTarget) { // An IPv4 address
+			generator.rawTargetCount++
+		} else if mayBeFQDN(rawTarget) { // Probably a FQDN
+			generator.rawTargetCount++
+		} else {
+		}
+	}
 	return nil
 }
 
@@ -129,7 +144,7 @@ func (generator *standardTGBackend) receiveTargets() <-chan AnyTargets {
 }
 
 func (generator *standardTGBackend) targetCount() (uint64, error) {
-	allTargets := uint64(len(generator.rawTargets) * (len(generator.tcpPorts) + len(generator.udpPorts)))
+	allTargets := generator.rawTargetCount * uint64(len(generator.tcpPorts)+len(generator.udpPorts))
 	blacklistedCount := generator.blacklist.addressCount * uint64(len(generator.tcpPorts)+len(generator.udpPorts))
 	return allTargets - blacklistedCount, nil
 }

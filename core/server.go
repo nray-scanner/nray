@@ -186,7 +186,8 @@ mainloop:
 				currentConfig.LogEvents(skeleton.GetWorkDone().Events)
 				nodeID := skeleton.GetWorkDone().NodeID
 				poolOfNode := currentConfig.getPoolFromNodeID(nodeID)
-				poolOfNode.removeJobFromJobArea(nodeID, skeleton.GetWorkDone().Batchid)
+				err := poolOfNode.removeJobFromJobArea(nodeID, skeleton.GetWorkDone().Batchid)
+				utils.CheckError(err, false)
 				serverMessage := &nraySchema.NrayServerMessage{
 					MessageContent: &nraySchema.NrayServerMessage_WorkDoneAck{
 						WorkDoneAck: &nraySchema.WorkDoneAck{},
@@ -288,6 +289,7 @@ func initPools() {
 		targetGenerator := targetgeneration.TargetGenerator{}
 		targetGenerator.Init(externalConfig.Sub("targetgenerator"))
 		pool.TargetChan = targetGenerator.GetTargetChan()
+		pool.SetTargetCount(targetGenerator.TargetCount())
 
 		// This goroutine creates jobs for each pool
 		go func(p *Pool) {

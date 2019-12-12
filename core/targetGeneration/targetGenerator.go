@@ -50,11 +50,16 @@ type AnyTargets struct {
 	UDPPorts    []uint32
 }
 
+func (at *AnyTargets) TargetCount() uint64 {
+	return uint64(len(at.RemoteHosts) * (len(at.TCPPorts) + len(at.UDPPorts)))
+}
+
 // TargetGenerator is the type that unifies all backends and provides
 // central access to all generated targets
 type TargetGenerator struct {
 	targetChannels []<-chan AnyTargets
 	targetChan     chan AnyTargets
+	targetCount    uint64
 }
 
 // Init takes the target generation subtree of the configuration
@@ -69,6 +74,8 @@ func (tg *TargetGenerator) Init(config *viper.Viper) {
 			// Supply config
 			err := backend.configure(config.Sub(availableBackend))
 			utils.CheckError(err, true)
+			tg.targetCount, err = backend.targetCount()
+			utils.CheckError(err, false)
 			// Append channel to slice holding all channels that are sending work
 			tg.targetChannels = append(tg.targetChannels, backend.receiveTargets())
 		}
@@ -79,6 +86,10 @@ func (tg *TargetGenerator) Init(config *viper.Viper) {
 // GetTargetChan is used to expose a read-only channel to the core
 func (tg *TargetGenerator) GetTargetChan() <-chan AnyTargets {
 	return tg.targetChan
+}
+
+func (tg *TargetGenerator) TargetCount() uint64 {
+	return tg.targetCount
 }
 
 // zipChannels reads from all channels supplying targets and sends work over a single

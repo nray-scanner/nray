@@ -20,17 +20,22 @@ type Pool struct {
 	jobAreaLock                 sync.Mutex
 	jobGenerationDone           bool
 	jobGenerationDoneLock       sync.RWMutex
+	CountTargets                uint64
+	CountWorkDone               uint64
+	poolLock                    sync.RWMutex
 }
 
 // Returns a pointer to a newly allocated pool
 func initPool() *Pool {
-	return &Pool{
+	p := &Pool{
 		nodes:                       make(map[string]*Node, 0),
 		TargetChan:                  make(chan targetgeneration.AnyTargets, 1024),
 		targetGenerationErrorStream: make(chan error, 100),
 		jobArea:                     make([]*Job, 0),
 		jobGenerationDone:           false,
 	}
+	go p.printProgress(30 * time.Second)
+	return p
 }
 
 func (p *Pool) getCurrentPoolSize() int {
@@ -137,15 +142,18 @@ func (p *Pool) removeJobFromJobArea(nodeID string, jobIDToDelete uint64) error {
 	p.jobAreaLock.Lock()
 	defer p.jobAreaLock.Unlock()
 	posOfJobToDelete := -1
+	workDoneCount := uint64(0)
 	// Locate Job
 	for pos, job := range p.jobArea {
 		if job.id == jobIDToDelete && job.nodeIDWorkingOnJob == nodeID {
 			posOfJobToDelete = pos
+			workDoneCount = job.workItems.TargetCount()
 			break
 		}
 	}
+
 	if posOfJobToDelete == -1 {
-		return fmt.Errorf("Couldn't find the ob to delete")
+		return fmt.Errorf("Couldn't find the job to delete")
 	}
 
 	// Enter the madness
@@ -153,6 +161,10 @@ func (p *Pool) removeJobFromJobArea(nodeID string, jobIDToDelete uint64) error {
 	p.jobArea[posOfJobToDelete] = p.jobArea[len(p.jobArea)-1]
 	p.jobArea[len(p.jobArea)-1] = nil
 	p.jobArea = p.jobArea[:len(p.jobArea)-1]
+
+	p.poolLock.Lock()
+	p.CountWorkDone += workDoneCount
+	p.poolLock.Unlock()
 	return nil
 }
 
@@ -277,4 +289,30 @@ func (p *Pool) NodesEmpty() bool {
 	p.nodeLock.RLock()
 	defer p.nodeLock.RUnlock()
 	return len(p.nodes) == 0
+}
+
+func (p *Pool) printProgress(pause time.Duration) {
+	ticker := time.NewTicker(pause)
+	for {
+		_ = <-ticker.C
+		p.poolLock.RLock()
+		done := p.CountWorkDone
+		all := p.CountTargets
+		p.poolLock.RUnlock()
+		ratio := float32(0)
+		if all != 0 && all >= done {
+			ratio = float32(done) / float32(all)
+		}
+		log.WithFields(log.Fields{
+			"module": "core.type_pool",
+			"src":    "printProgress",
+		}).Infof("All: %d; TODO: %d; Done: %d (%.2f%%)", all, all-done, done, ratio*100)
+	}
+}
+
+// SetTargetCount is goroutine safe for setting the target count
+func (p *Pool) SetTargetCount(targetCount uint64) {
+	p.poolLock.Lock()
+	defer p.poolLock.Unlock()
+	p.CountTargets = targetCount
 }
