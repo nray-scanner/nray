@@ -273,8 +273,9 @@ func SendMessage(sock mangos.Socket, message *nraySchema.NrayServerMessage) {
 }
 
 func initPools() {
+	statusInterval := externalConfig.GetDuration("statusPrintInterval")
 	for i := 0; i < externalConfig.GetInt("pools"); i++ {
-		CurrentConfig.Pools[i] = initPool()
+		CurrentConfig.Pools[i] = initPool(statusInterval)
 	}
 
 	// Create goroutines that clean up pools regularly

@@ -26,7 +26,7 @@ type Pool struct {
 }
 
 // Returns a pointer to a newly allocated pool
-func initPool() *Pool {
+func initPool(statusInterval time.Duration) *Pool {
 	p := &Pool{
 		nodes:                       make(map[string]*Node, 0),
 		TargetChan:                  make(chan targetgeneration.AnyTargets, 1024),
@@ -34,7 +34,7 @@ func initPool() *Pool {
 		jobArea:                     make([]*Job, 0),
 		jobGenerationDone:           false,
 	}
-	go p.printProgress(30 * time.Second)
+	go p.printProgress(statusInterval)
 	return p
 }
 

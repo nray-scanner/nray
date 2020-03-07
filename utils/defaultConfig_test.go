@@ -37,6 +37,9 @@ func TestApplyDefaultConfig(t *testing.T) {
 	if !result.IsSet("TLS.forceClientAuth") || result.GetBool("TLS.forceClientAuth") != false {
 		t.Errorf("Test failed: Passing nil to config")
 	}
+	if !result.IsSet("statusPrintInterval") || result.GetDuration("statusPrintInterval") != 15*time.Second {
+		t.Errorf("Test failed: Passing nil to config")
+	}
 	if !result.IsSet("pools") || result.GetUint("pools") != 1 {
 		t.Errorf("Test failed: Passing nil to config")
 	}
@@ -78,6 +81,9 @@ func TestApplyDefaultConfig(t *testing.T) {
 		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("TLS.forceClientAuth") || result.GetBool("TLS.forceClientAuth") != false {
+		t.Errorf("Test failed: Passing empty viper to config")
+	}
+	if !result.IsSet("statusPrintInterval") || result.GetDuration("statusPrintInterval") != 15*time.Second {
 		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("pools") || result.GetUint("pools") != 1 {

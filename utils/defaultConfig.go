@@ -18,6 +18,7 @@ func ApplyDefaultConfig(config *viper.Viper) *viper.Viper {
 	defaultConfig.SetDefault("TLS.cert", "")
 	defaultConfig.SetDefault("TLS.key", "")
 	defaultConfig.SetDefault("TLS.forceClientAuth", false)
+	defaultConfig.SetDefault("statusPrintInterval", 15*time.Second)
 	defaultConfig.SetDefault("pools", 1)
 	defaultConfig.SetDefault("considerClientPoolPreference", true)
 	defaultConfig.SetDefault("internal.nodeExpiryTime", 30)
