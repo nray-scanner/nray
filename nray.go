@@ -9,7 +9,7 @@ import (
 // This variables can be set at build time :)
 var server string
 var port string
-var nrayVersion = "1.0.1"
+var nrayVersion = "1.1.0"
 
 func main() {
 	printMeta()
