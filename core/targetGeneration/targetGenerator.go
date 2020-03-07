@@ -50,6 +50,7 @@ type AnyTargets struct {
 	UDPPorts    []uint32
 }
 
+// TargetCount returns the number of targets, meaning individual ports on individual systems
 func (at *AnyTargets) TargetCount() uint64 {
 	return uint64(len(at.RemoteHosts) * (len(at.TCPPorts) + len(at.UDPPorts)))
 }
@@ -88,6 +89,7 @@ func (tg *TargetGenerator) GetTargetChan() <-chan AnyTargets {
 	return tg.targetChan
 }
 
+// TargetCount returns the total target count of this target generator.
 func (tg *TargetGenerator) TargetCount() uint64 {
 	return tg.targetCount
 }
