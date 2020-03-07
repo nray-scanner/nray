@@ -40,7 +40,7 @@ func RunNodeScannerLoop(controller *ScanController, workBatchChan <-chan *nraySc
 		log.WithFields(log.Fields{
 			"module": "scanner.scanner",
 			"src":    "RunNodeScannerLoop",
-		}).Info("Requesting work batch")
+		}).Info("Requesting new work batch")
 		dataChan <- requestBatch(controller.nodeID)
 
 		// Get the work
@@ -98,6 +98,10 @@ func RunNodeScannerLoop(controller *ScanController, workBatchChan <-chan *nraySc
 		wg.Wait()
 		controller.workersDone = true
 		close(controller.portscanResultQueue)
+		log.WithFields(log.Fields{
+			"module": "scanner.scanner",
+			"src":    "RunNodeScannerLoop",
+		}).Info("Finished work batch, submitting results")
 		dataChan <- reportResults(controller.nodeID, workBatch.Batchid, controller.getResults())
 	}
 }
