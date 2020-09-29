@@ -1,0 +1,61 @@
+debug: true
+listen: [8601]
+host: "0.0.0.0"
+targetgenerator:
+  bufferSize: 5
+  # The default target generator
+  standard:
+    enabled: true
+    targets: ["172.0.0.0/16"]
+    #targetFile: "./targets.txt"
+    tcpports: ["top25", "80","443","8080","445","22","1099","3389","5432","111","2049","8443","8000","3306","5900","21","8888","8009","1433", "5985", "5986", "8008", "8010", "8020", "1434"]
+    udpports: ["top5", "1433"]
+    blacklist: []
+    #blacklistFile: "./blacklist.txt"
+    maxHostsPerBatch: 500
+    maxTcpPortsPerBatch: 50
+    maxUdpPortsPerBatch: 25
+
+# Configuration of scanners goes here
+scannerconfig:
+  workers: 1000
+  # ratelimit defines how many workers call the scan() function per second. 
+  # Having a rate limit allows us to utilize most ressources by having lots
+  # of workers that may wait for network IO/timeouts whereas in case of a 
+  # burst (e.g. start of a scan) the rate limit blocks all workers from
+  # starting their job at once
+  # Expects a number or 'none' (lowercase!) if no limit should be applied.
+  #ratelimit: "none"
+
+  # tcp port scanner
+  tcp:
+    # Connect timeout in milliseconds
+    timeout: 1500ms
+    
+  udp:
+    # Fast sends only probes for known protocols
+    fast: false
+    # Default payload. This is sent when the scanner is not aware of the protocol. See documentation
+    # for a complete list of protocols supported by the scanner
+    defaultHexPayload: "\x6e\x72\x61\x79"
+    # You may define/overwrite port:payloads at your wish. For encoding arbitrary data, see https://golang.org/ref/spec#Rune_literals
+    #customHexPayloads: 
+    #  "19": "A" # chargen. "A" is the same as "\x41" (hex) or "\101" (oct)
+    # Timeout to wait for a response
+    timeout: 1000ms
+
+events:
+  terminal:
+    # Any matching filter is going to be printed
+    filter: 
+      environment: # empty filter is printed if a element of this type exists
+      #result.port: 80
+      result.portscan.open: true
+    internal:
+      channelsize: 1000
+  json-file: 
+    filename: "nray-results-fastrun.json"
+    overwriteExisting: false 
+    internal: # Don't touch these unless you know what you do
+      channelsize: 10000 # Internal event buffer
+      synctimer: 10s # flush interval
