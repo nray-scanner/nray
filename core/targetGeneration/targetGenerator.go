@@ -16,15 +16,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-const regexIPv4 = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
-const regexNetIPv4 = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\/(3[0-2]|[1-2][0-9]|[0-9]))$"
-const regexPortRange = "^[0-9]{1,5}-[0-9]{1,5}$"
-const regexTopPorts = "^[tT]op[-]?[0-9]{1,4}$"
-const regexThousandNumber = "[0-9]{1,4}"
-
-var ipv4Regexpr = regexp.MustCompile(regexIPv4)
-var ipv4NetRegexpr = regexp.MustCompile(regexNetIPv4)
-
 var availableBackends = []string{"standard", "certificatetransparency", "ldap"}
 
 // getBackend returns the correct backend for a backend name
@@ -157,13 +148,6 @@ func GetNmapTopUDPPorts(topN uint) []uint16 {
 	return TopUDPPorts[0:int(topN)]
 }
 
-func mayBeFQDN(toCheck string) bool {
-	// If there is no scheme and no port, we may be good
-	// Simply check if there are any ":" or "/" in the string,
-	// otherwise give it a try
-	return !strings.ContainsAny(toCheck, ":/")
-}
-
 // GenerateIPStreamFromCIDR uses the ZMap algorithm to expand a CIDR network.
 // A blacklist may be specified and hosts contained in there are omitted.
 // Returns a stream of hosts, which is closed when the network has been completely expanded.
@@ -244,9 +228,9 @@ func GeneratePortStream(ports []uint16) <-chan uint16 {
 // Errors are sent back over errorChan
 func ParsePorts(rawPorts []string, proto string) []uint16 {
 	ports := make([]uint16, 0)
-	portRangeRegexpr := regexp.MustCompile(regexPortRange)
-	topPortsRegexpr := regexp.MustCompile(regexTopPorts)
-	thousandNumberRegexp := regexp.MustCompile(regexThousandNumber)
+	portRangeRegexpr := regexp.MustCompile(utils.RegexPortRange)
+	topPortsRegexpr := regexp.MustCompile(utils.RegexTopPorts)
+	thousandNumberRegexp := regexp.MustCompile(utils.RegexThousandNumber)
 	for _, candidate := range rawPorts {
 		// A single port
 		parsed, err := strconv.ParseUint(candidate, 10, 32)

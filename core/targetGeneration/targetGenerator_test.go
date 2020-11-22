@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/apparentlymart/go-cidr/cidr"
+	"github.com/nray-scanner/nray/utils"
 )
 
 func TestReceiveTargets(t *testing.T) {
@@ -212,7 +213,7 @@ func TestMayBeFQDN(t *testing.T) {
 	// FQDN
 	fqdns := []string{"www.google.com", "127.0.0.1", "localhost", "some.long.domain.local"}
 	for _, element := range fqdns {
-		if !mayBeFQDN(element) {
+		if !utils.MayBeFQDN(element) {
 			fmt.Printf("%s should be recognized as FQDN\n", element)
 			t.Fail()
 		}
@@ -221,7 +222,7 @@ func TestMayBeFQDN(t *testing.T) {
 	// No FQDN
 	notfqdns := []string{"https://www.google.com/", "localhost:8080", "http://localhost:8100"}
 	for _, element := range notfqdns {
-		if mayBeFQDN(element) {
+		if utils.MayBeFQDN(element) {
 			fmt.Printf("%s should not be recognized as FQDN\n", element)
 			t.Fail()
 		}

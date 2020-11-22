@@ -60,13 +60,13 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 
 	// Count targets
 	for _, rawTarget := range generator.rawTargets {
-		if ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
+		if utils.Ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
 			_, ipnet, err := net.ParseCIDR(rawTarget)
 			utils.CheckError(err, true)
 			generator.rawTargetCount += cidr.AddressCount(ipnet)
-		} else if ipv4Regexpr.MatchString(rawTarget) { // An IPv4 address
+		} else if utils.Ipv4Regexpr.MatchString(rawTarget) { // An IPv4 address
 			generator.rawTargetCount++
-		} else if mayBeFQDN(rawTarget) { // Probably a FQDN
+		} else if utils.MayBeFQDN(rawTarget) { // Probably a FQDN
 			generator.rawTargetCount++
 		} else {
 		}
@@ -84,18 +84,18 @@ func (generator *standardTGBackend) receiveTargets() <-chan AnyTargets {
 	// Decides if input is an IP, net or domain and fills the target channel with target strings
 	go func(targetChan chan<- string, rawTargets []string) {
 		for _, rawTarget := range rawTargets {
-			if ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
+			if utils.Ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
 				_, ipnet, err := net.ParseCIDR(rawTarget)
 				utils.CheckError(err, true)
 				ipStream := GenerateIPStreamFromCIDR(ipnet, generator.blacklist)
 				for ip := range ipStream {
 					targets <- ip.String()
 				}
-			} else if ipv4Regexpr.MatchString(rawTarget) { // An IPv4 address
+			} else if utils.Ipv4Regexpr.MatchString(rawTarget) { // An IPv4 address
 				if !generator.blacklist.IsIPBlacklisted(rawTarget) {
 					targets <- rawTarget
 				}
-			} else if mayBeFQDN(rawTarget) { // Probably a FQDN
+			} else if utils.MayBeFQDN(rawTarget) { // Probably a FQDN
 				if !generator.blacklist.IsDNSNameBlacklisted(rawTarget) {
 					targets <- rawTarget
 				}

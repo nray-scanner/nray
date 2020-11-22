@@ -29,15 +29,15 @@ func NewBlacklist() *NrayBlacklist {
 // AddToBlacklist can be used if the type of the element
 // is unclear
 func (blacklist *NrayBlacklist) AddToBlacklist(element string) uint64 {
-	if ipv4NetRegexpr.MatchString(element) { // An IPv4 network
+	if utils.Ipv4NetRegexpr.MatchString(element) { // An IPv4 network
 		blacklist.AddNetToBlacklist(element)
 		_, ipnet, err := net.ParseCIDR(element)
 		utils.CheckError(err, true)
 		return cidr.AddressCount(ipnet)
-	} else if ipv4Regexpr.MatchString(element) { // An IPv4 address
+	} else if utils.Ipv4Regexpr.MatchString(element) { // An IPv4 address
 		blacklist.AddNetToBlacklist(fmt.Sprintf("%s/32", element))
 		return 1
-	} else if mayBeFQDN(element) { // Probably a FQDN
+	} else if utils.MayBeFQDN(element) { // Probably a FQDN
 		blacklist.AddDNSNameToBlacklist(element)
 		return 1
 	} else {
