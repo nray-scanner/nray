@@ -72,33 +72,6 @@ targetgenerator:
     maxHostsPerBatch: 150
     maxTcpPortsPerBatch: 25
     maxUdpPortsPerBatch: 25
-#  certificatetransparency:
-#    enabled: false
-#    # For regex debugging: https://play.golang.org/p/jgDiTmPlqdW
-#    domainRegex: '^(www[.]).*([.]com)$'
-#    tcpports: [top25]
-#    udpports: [top25]
-#    blacklist: []
-#    maxHostsPerBatch: 150
-#    maxTcpPortsPerBatch: 25
-#    maxUdpPortsPerBatch: 25
-#  ldap:
-#    enabled: false
-#    ldapSearchString: "(objectCategory=computer)"
-#    baseDN: "dc=contoso,dc=com"
-#    ldapAttribute: "dNSHostName"
-#    ldapServer: ""
-#    ldapPort: 636
-#    insecure: false
-#    ldapUser: ""
-#    ldapPass: ""
-#    tcpports: [top25]
-#    udpports: [top25]
-#    blacklist: []
-#    maxHostsPerBatch: 5
-#    maxTcpPortsPerBatch: 25
-#    maxUdpPortsPerBatch: 25
-
 
 # Configuration of scanners goes here
 scannerconfig:

@@ -49,47 +49,6 @@ func ApplyDefaultTargetgeneratorStandardConfig(config *viper.Viper) *viper.Viper
 	return defaultConfig
 }
 
-// ApplyDefaultTargetgeneratorCertificatetransparencyConfig sets default values for certificate transparency target generator
-func ApplyDefaultTargetgeneratorCertificatetransparencyConfig(config *viper.Viper) *viper.Viper {
-	defaultConfig := viper.New()
-	defaultConfig.SetDefault("enabled", false)
-	defaultConfig.SetDefault("domainRegex", "^.*$")
-	defaultConfig.SetDefault("tcpports", []string{"top25"})
-	defaultConfig.SetDefault("udpports", []string{"top25"})
-	defaultConfig.SetDefault("blacklist", []string{""})
-	defaultConfig.SetDefault("maxHostsPerBatch", 150)
-	defaultConfig.SetDefault("maxTcpPortsPerBatch", 25)
-	defaultConfig.SetDefault("maxUdpPortsPerBatch", 25)
-	if config != nil {
-		defaultConfig.MergeConfigMap(config.AllSettings())
-	}
-	return defaultConfig
-}
-
-// ApplyDefaultTargetgeneratorLDAPConfig sets default values for ldap target generator
-func ApplyDefaultTargetgeneratorLDAPConfig(config *viper.Viper) *viper.Viper {
-	defaultConfig := viper.New()
-	defaultConfig.SetDefault("enabled", false)
-	defaultConfig.SetDefault("ldapSearchString", "(objectCategory=computer)")
-	defaultConfig.SetDefault("baseDN", "dc=contoso,dc=com")
-	defaultConfig.SetDefault("ldapAttribute", "dNSHostName")
-	defaultConfig.SetDefault("ldapServer", "")
-	defaultConfig.SetDefault("ldapPort", 636)
-	defaultConfig.SetDefault("insecure", false)
-	defaultConfig.SetDefault("ldapUser", "")
-	defaultConfig.SetDefault("ldapPass", "")
-	defaultConfig.SetDefault("tcpports", []string{"top25"})
-	defaultConfig.SetDefault("udpports", []string{"top25"})
-	defaultConfig.SetDefault("blacklist", []string{""})
-	defaultConfig.SetDefault("maxHostsPerBatch", 150)
-	defaultConfig.SetDefault("maxTcpPortsPerBatch", 25)
-	defaultConfig.SetDefault("maxUdpPortsPerBatch", 25)
-	if config != nil {
-		defaultConfig.MergeConfigMap(config.AllSettings())
-	}
-	return defaultConfig
-}
-
 // ApplyDefaultScannerConfig is called when the node applies the configuration sent
 // by the server in order to have defaults in place
 func ApplyDefaultScannerConfig(config *viper.Viper) *viper.Viper {

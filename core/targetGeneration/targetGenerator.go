@@ -23,10 +23,6 @@ func getBackend(backendName string) targetGeneratorBackend {
 	switch backendName {
 	case "standard":
 		return &standardTGBackend{}
-	case "certificatetransparency":
-		return &certificateTransparencyBackend{}
-	case "ldap":
-		return &ldapBackend{}
 	default:
 		return nil
 	}
