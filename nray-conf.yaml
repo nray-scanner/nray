@@ -101,29 +101,6 @@ scannerconfig:
     # Timeout to wait for a response
     timeout: 1000ms
 
-  # zgrab2 is used for some higher-layer protocol scans
-  #zgrab2:
-  #  enabledModules: []
-  #  # Configuration for ssh scanner
-  #  ssh:
-  #    subscribePorts: ["tcp/22"]
-  #    timeout: 2500ms
-  #    ClientID: "SSH-2.0-Go-nray" 
-  #    CollectUserAuth: true   # see what userauth methods are allowed
-  #  # Configuration for http(s) scanner
-  #  # HTTP scanner is currently a little bit buggy, there seem to be also bugs in the upstream implementation.
-  #  # Use with caution
-  #  http:
-  #    subscribeHTTPPorts: ["tcp/80", "tcp/8080", "tcp/8000"]
-  #    subscribeHTTPSPorts: ["tcp/443", "tcp/8443"]
-  #    timeout: 2500ms
-  #    # Values commented out are also defaults, therefore no need to specify them explicitly
-  #    method: "GET"
-  #    endpoint: "/"
-  #    userAgent: "nray" 
-  #    retryHTTPS: true # If connection attempt via HTTP fails, try HTTPS?
-  #    maxRedirects: 2     
-
 # Everything in the event node controls if and how data is written
 events:
   terminal:

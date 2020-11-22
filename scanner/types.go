@@ -123,17 +123,6 @@ func CreateScanController(nodeID string, nodeName string, timeOffset time.Durati
 		ratelimiter:         rate.NewLimiter(rate.Inf, 1),
 		scansRunning:        0,
 	}
-	requestedZgrab2Modules := scannerConfig.GetStringSlice("zgrab2.enabledModules")
-	for _, module := range requestedZgrab2Modules {
-		for _, availableModule := range ZGrab2AvailableScanners {
-			if module == availableModule {
-				zgrab2Scanner := GetZGrab2Scanner(module)
-				zgrab2Scanner.Configure(scannerConfig.Sub(fmt.Sprintf("zgrab2.%s", module)), nodeID, nodeName)
-				zgrab2Scanner.Register(sc)
-				break
-			}
-		}
-	}
 	return sc
 }
 
