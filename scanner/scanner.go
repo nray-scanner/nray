@@ -147,7 +147,7 @@ func PrepareScanFuncs(tcpscanner *TCPScanner, udpscanner *UDPScanner, targetMsg 
 				port := targetTCPPort
 				timeout := tcpscanner.timeout
 				scanFuncs <- func() {
-					result, err := tcpConnectIsOpen(t, port, timeout)
+					result, err := TCPConnectIsOpen(t, port, timeout)
 					utils.CheckError(err, false)
 					results <- result
 				}
@@ -156,7 +156,7 @@ func PrepareScanFuncs(tcpscanner *TCPScanner, udpscanner *UDPScanner, targetMsg 
 				t := target
 				port := targetUDPPort
 				scanFuncs <- func() {
-					result, err := udpProtoScan(t, port, *udpscanner)
+					result, err := UDPProtoScan(t, port, *udpscanner)
 					utils.CheckError(err, false)
 					results <- result
 				}

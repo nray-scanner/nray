@@ -38,9 +38,9 @@ func (pi *PauseIndicator) GetValue() bool {
 // is reachable knowing a proto (TCP/UDP), a destination (FQDN or IP)
 // and a port
 type Target struct {
-	protocol string
-	host     string
-	port     uint32
+	Protocol string
+	Host     string
+	Port     uint32
 }
 
 // ScanTargets allows to abstract different types of target notations
@@ -66,9 +66,9 @@ func (st *StandardTargets) getTargetGenerator() <-chan *Target {
 	go func(proto string, url string, ports []uint32, channel chan<- *Target) {
 		for _, port := range ports {
 			channel <- &Target{
-				protocol: proto,
-				host:     url,
-				port:     port,
+				Protocol: proto,
+				Host:     url,
+				Port:     port,
 			}
 		}
 	}(st.protocol, st.url, st.targetPorts, targetChan)

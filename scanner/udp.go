@@ -23,7 +23,11 @@ type UDPScanner struct {
 	defaultPayload []byte
 }
 
-func udpProtoScan(target string, port uint32, config UDPScanner) (*PortscanResult, error) {
+// UDPProtoScan uses the operating system's mechanism to open a
+// UDP connection to a given target IP address at a given port.
+// Timeout specifies how long to wait before aborting the connection
+// attempt
+func UDPProtoScan(target string, port uint32, config UDPScanner) (*PortscanResult, error) {
 	// Get proto payload
 	payload, ok := (*config.payloads)[port]
 	if !ok {

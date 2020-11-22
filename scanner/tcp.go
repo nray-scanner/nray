@@ -20,12 +20,11 @@ type PortscanResult struct {
 	Timeout  time.Duration `json:"Timeout"`
 }
 
-// tcpConnectIsOpen uses the operating system's mechanism to open a
+// TCPConnectIsOpen uses the operating system's mechanism to open a
 // TCP connection to a given target IP address at a given port.
 // Timeout specifies how long to wait before aborting the connection
 // attempt
-func tcpConnectIsOpen(target string, port uint32, timeout time.Duration) (*PortscanResult, error) {
-
+func TCPConnectIsOpen(target string, port uint32, timeout time.Duration) (*PortscanResult, error) {
 	if target == "" {
 		return nil, fmt.Errorf("target is nil")
 	}
@@ -37,9 +36,7 @@ func tcpConnectIsOpen(target string, port uint32, timeout time.Duration) (*Ports
 				"src":    "tcpConnectIsOpen",
 			}).Warning("Too many open files. You are running too many scan workers and the OS is limiting file descriptors. YOU ARE MISSING SCAN RESULTS. Scan with less workers")
 		}
-	}
-	if err != nil {
-		return nil, nil
+		return nil, nil // port is closed
 	}
 	defer conn.Close()
 	result := PortscanResult{
