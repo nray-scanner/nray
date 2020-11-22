@@ -24,8 +24,6 @@ func GetEventHandler(EventHandlerName string) EventHandler {
 		return &JSONFileEventHandler{}
 	case "terminal":
 		return &TerminalEventHandler{}
-	case "elasticsearch":
-		return &ElasticsearchEventHandler{}
 	default:
 		return nil
 	}

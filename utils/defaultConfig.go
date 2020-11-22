@@ -202,17 +202,3 @@ func ApplyDefaultEventJSONFileConfig(config *viper.Viper) *viper.Viper {
 	}
 	return defaultConfig
 }
-
-// ApplyDefaultEventElasticsearchConfig is called when the ElasticsearchEventHandler is initialized
-func ApplyDefaultEventElasticsearchConfig(config *viper.Viper) *viper.Viper {
-	defaultConfig := viper.New()
-	defaultConfig.SetDefault("useTLS", true)
-	defaultConfig.SetDefault("port", 443)
-	defaultConfig.SetDefault("internal.indexname", "nray")
-	defaultConfig.SetDefault("internal.channelsize", 10000)
-	defaultConfig.SetDefault("internal.committimer", 3)
-	if config != nil {
-		defaultConfig.MergeConfigMap(config.AllSettings())
-	}
-	return defaultConfig
-}
