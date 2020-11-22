@@ -14,7 +14,6 @@ import (
 
 	"github.com/nray-scanner/nray/events"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/golang/protobuf/proto"
 	log "github.com/sirupsen/logrus"
 
@@ -227,7 +226,6 @@ mainloop:
 				"module": "core.server",
 				"src":    "server",
 			}).Error("Cannot decode message sent by node")
-			spew.Dump(skeleton)
 		}
 
 		// If the Job queue is empty and job generation is done, stop all nodes
