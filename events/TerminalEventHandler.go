@@ -64,16 +64,7 @@ func (t *TerminalEventHandler) startEventPrinter() {
 	for {
 		event, more := <-t.eventChan
 		if more {
-			if len(t.eventFilter) > 0 {
-				for filter, value := range t.eventFilter {
-					if FilterMatchesEvent(event, filter, value) {
-						log.Infof("Event: %s", event)
-						break
-					}
-				}
-			} else {
-				log.Infof("Event: %s", event)
-			}
+			log.Infof("Event: %s", event)
 		} else {
 			return
 		}

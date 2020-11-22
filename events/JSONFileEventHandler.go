@@ -33,6 +33,7 @@ func (handler *JSONFileEventHandler) Configure(config *viper.Viper) error {
 		"module": "events.JSONFileEventHandler",
 		"src":    "Configure",
 	}).Debug("Checking if filedescriptor already exists")
+
 	if handler.filedescriptor != nil {
 		log.Debug("File descriptor already exists, returning an error")
 		return fmt.Errorf("This EventHandler is already configured")
@@ -103,12 +104,13 @@ func (handler *JSONFileEventHandler) Close() error {
 	log.WithFields(log.Fields{
 		"module": "events.JSONFileEventHandler",
 		"src":    "Close",
-	}).Debug("Closing EventHandler")
+	}).Println("Closing EventHandler")
 	handler.waitgroup.Wait()
-	close(handler.eventChan)
 	for len(handler.eventChan) > 0 { // Give time to flush events still in queue
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(1 * time.Second)
 	}
+	close(handler.eventChan)
+
 	err := handler.filedescriptor.Close()
 	return err
 }
@@ -133,18 +135,8 @@ func (handler *JSONFileEventHandler) startEventWriter() {
 		select {
 		case event, more := <-handler.eventChan:
 			if more {
-				if len(handler.eventFilter) > 0 {
-					for filter, value := range handler.eventFilter {
-						if FilterMatchesEvent(event, filter, value) {
-							handler.filedescriptor.Write([]byte(event))
-							handler.filedescriptor.Write([]byte{'\n'})
-							break
-						}
-					}
-				} else {
-					handler.filedescriptor.Write([]byte(event))
-					handler.filedescriptor.Write([]byte{'\n'})
-				}
+				handler.filedescriptor.Write([]byte(event))
+				handler.filedescriptor.Write([]byte{'\n'})
 			} else {
 				handler.filedescriptor.Write([]byte{'\n'})
 				return

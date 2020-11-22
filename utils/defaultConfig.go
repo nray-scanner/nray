@@ -183,8 +183,6 @@ func ApplyDefaultScannerZgrab2HTTPConfig(config *viper.Viper) *viper.Viper {
 // ApplyDefaultEventTerminalConfig is called when the TerminalEventHandler is initialized
 func ApplyDefaultEventTerminalConfig(config *viper.Viper) *viper.Viper {
 	defaultConfig := viper.New()
-	defaultConfig.SetDefault("filter.environment", "")
-	defaultConfig.SetDefault("filter.portscan.open", true)
 	defaultConfig.SetDefault("internal.channelsize", 1000)
 	if config != nil {
 		defaultConfig.MergeConfigMap(config.AllSettings())

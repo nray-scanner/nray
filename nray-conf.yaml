@@ -154,11 +154,6 @@ scannerconfig:
 # Everything in the event node controls if and how data is written
 events:
   terminal:
-    # Any matching filter is going to be printed
-    filter: 
-      environment: # empty filter is printed if a element of this type exists
-      #result.port: 80
-      #result.portscan.open: true
     internal:
       channelsize: 1000
   json-file: 
@@ -169,17 +164,3 @@ events:
     internal: # Don't touch these unless you know what you do
       channelsize: 10000 # Internal event buffer
       synctimer: 10s # flush interval
-  #elasticsearch:
-  #  # FQDN or IP of elasticsearch instance
-  #  server: "elasticsearch.local"
-  #  # specifies if HTTPS is used
-  #  useTLS: true
-  #  # elasticsearch port
-  #  port: 443
-  #  internal:
-  #    # the index name nray is writing its events to
-  #    indexname: "nray"
-  #    # size of the internal buffer
-  #    channelsize: 10000
-  #    # time in seconds to commit results to elasticsearch
-  #    committimer: 3

@@ -962,12 +962,6 @@ func TestApplyDefaultEventTerminalConfig(t *testing.T) {
 
 	// Test passing nil to the function
 	result = utils.ApplyDefaultEventTerminalConfig(nil)
-	if !result.IsSet("filter.environment") || result.GetString("filter.environment") != "" {
-		t.Errorf("Test failed: Passing nil to config")
-	}
-	if !result.IsSet("filter.portscan.open") || result.GetBool("filter.portscan.open") != true {
-		t.Errorf("Test failed: Passing nil to config")
-	}
 	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 1000 {
 		t.Errorf("Test failed: Passing nil to config")
 	}
@@ -975,27 +969,14 @@ func TestApplyDefaultEventTerminalConfig(t *testing.T) {
 	// Test passing an empty viper to the function
 	emptyViper := viper.New()
 	result = utils.ApplyDefaultEventTerminalConfig(emptyViper)
-	if !result.IsSet("filter.environment") || result.GetString("filter.environment") != "" {
-		t.Errorf("Test failed: Passing empty viper to config")
-	}
-	if !result.IsSet("filter.portscan.open") || result.GetBool("filter.portscan.open") != true {
-		t.Errorf("Test failed: Passing empty viper to config")
-	}
 	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 1000 {
 		t.Errorf("Test failed: Passing empty viper to config")
 	}
 
 	// Pass a viper with a value explicitly set. The value mustn't change.
 	viperWithValue := viper.New()
-	viperWithValue.Set("filter.portscan.open", false)
 	viperWithValue.Set("internal.channelsize", 1500)
 	result = utils.ApplyDefaultEventTerminalConfig(viperWithValue)
-	if !result.IsSet("filter.environment") || result.GetString("filter.environment") != "" {
-		t.Errorf("Test failed: Passing changed value to config")
-	}
-	if !result.IsSet("filter.portscan.open") || result.GetBool("filter.portscan.open") != false {
-		t.Errorf("Test failed: Passing changed value to config")
-	}
 	if !result.IsSet("internal.channelsize") || result.GetUint("internal.channelsize") != 1500 {
 		t.Errorf("Test failed: Passing changed value to config")
 	}
