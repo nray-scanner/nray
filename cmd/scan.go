@@ -38,10 +38,10 @@ is what you are looking for. Get the work done nmap-style like you are used to.`
 		if rawTargets == "" { // scan from stdin
 
 		}
-
-		config := viper.New()
-		config.Set("filename", outputFile)
-		config.Set("overwriteExisting", true)
+		persistResults := true
+		if outputFile == "" {
+			persistResults = false
+		}
 
 		targetChan := parseTargets()
 		parsedPorts := parsePorts()
@@ -49,10 +49,18 @@ is what you are looking for. Get the work done nmap-style like you are used to.`
 		resultChan := make(chan (*scanner.PortscanResult), 100)
 		scanFuncs := prepareScanFuncs(scanChan, resultChan)
 
-		logfile := events.GetEventHandler("json-file")
-		logfile.Configure(config)
-		filechan := make(chan (*nraySchema.Event), 1000)
-		go logfile.ProcessEventStream(filechan)
+		var filechan chan *nraySchema.Event
+		var logfile events.EventHandler
+		if persistResults {
+			config := viper.New()
+			config.Set("filename", outputFile)
+			config.Set("overwriteExisting", true)
+			logfile := events.GetEventHandler("json-file")
+			logfile.Configure(config)
+			filechan := make(chan (*nraySchema.Event), 1000)
+			go logfile.ProcessEventStream(filechan)
+		}
+
 		stdout := events.GetEventHandler("terminal")
 		stdout.Configure(viper.New())
 		stdoutchan := make(chan (*nraySchema.Event), 1000)
@@ -82,14 +90,19 @@ is what you are looking for. Get the work done nmap-style like you are used to.`
 						},
 					},
 				}
-				filechan <- data
+				if persistResults {
+					filechan <- data
+				}
 				stdoutchan <- data
 			}
 		}(resultChan)
 		startScan(scanFuncs, resultChan)
 
 		utils.CheckError(stdout.Close(), false)
-		utils.CheckError(logfile.Close(), false)
+		if persistResults {
+			utils.CheckError(logfile.Close(), false)
+		}
+
 	},
 }
 
