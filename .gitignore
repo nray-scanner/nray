@@ -21,3 +21,4 @@ build/
 # release
 release.zip
 nray
+dist/
