@@ -5,8 +5,10 @@ import (
 	"strings"
 
 	"github.com/apparentlymart/go-cidr/cidr"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/viper"
 
+	"github.com/bitfield/script"
 	"github.com/nray-scanner/nray/utils"
 	log "github.com/sirupsen/logrus"
 )
@@ -36,19 +38,20 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 	generator.maxUDPPorts = uint(conf.GetInt("maxUdpPortsPerBatch"))
 
 	if conf.IsSet("targetFile") && strings.Trim(conf.GetString("targetFile"), " ") != "" {
-		targetHosts, err := utils.ReadFileLinesToStringSlice(conf.GetString("targetFile"))
+		targetHosts, err := script.File(conf.GetString("targetFile")).Slice()
 		utils.CheckError(err, false)
 		for _, target := range targetHosts {
 			generator.rawTargets = append(generator.rawTargets, target)
 		}
 	}
 
+	spew.Dump(generator.rawTargets)
 	generator.blacklist = NewBlacklist()
 	for _, blacklistItem := range conf.GetStringSlice("blacklist") {
 		_ = generator.blacklist.AddToBlacklist(blacklistItem)
 	}
 	if conf.IsSet("blacklistFile") && strings.Trim(conf.GetString("blacklistFile"), " ") != "" {
-		blacklistHosts, err := utils.ReadFileLinesToStringSlice(conf.GetString("blacklistFile"))
+		blacklistHosts, err := script.File(conf.GetString("blacklistFile")).Slice()
 		utils.CheckError(err, false)
 		for _, blacklistItem := range blacklistHosts {
 			_ = generator.blacklist.AddToBlacklist(blacklistItem)
@@ -60,7 +63,9 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 
 	// Count targets
 	for _, rawTarget := range generator.rawTargets {
-		if utils.Ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
+		if rawTarget == "" {
+			continue
+		} else if utils.Ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
 			_, ipnet, err := net.ParseCIDR(rawTarget)
 			utils.CheckError(err, true)
 			generator.rawTargetCount += cidr.AddressCount(ipnet)
@@ -84,7 +89,9 @@ func (generator *standardTGBackend) receiveTargets() <-chan AnyTargets {
 	// Decides if input is an IP, net or domain and fills the target channel with target strings
 	go func(targetChan chan<- string, rawTargets []string) {
 		for _, rawTarget := range rawTargets {
-			if utils.Ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
+			if rawTarget == "" {
+				continue
+			} else if utils.Ipv4NetRegexpr.MatchString(rawTarget) { // An IPv4 network
 				_, ipnet, err := net.ParseCIDR(rawTarget)
 				utils.CheckError(err, true)
 				ipStream := GenerateIPStreamFromCIDR(ipnet, generator.blacklist)
