@@ -270,9 +270,6 @@ func TestApplyDefaultScannerConfig(t *testing.T) {
 	if !result.IsSet("ratelimit") || result.GetString("ratelimit") != "none" {
 		t.Errorf("Test failed: Passing nil to config")
 	}
-	if !result.IsSet("zgrab2.enabledModules") {
-		t.Errorf("Test failed: Passing nil to config")
-	}
 
 	// Test passing an empty viper to the function
 	emptyViper := viper.New()
@@ -281,9 +278,6 @@ func TestApplyDefaultScannerConfig(t *testing.T) {
 		t.Errorf("Test failed: Passing empty viper to config")
 	}
 	if !result.IsSet("ratelimit") || result.GetString("ratelimit") != "none" {
-		t.Errorf("Test failed: Passing empty viper to config")
-	}
-	if !result.IsSet("zgrab2.enabledModules") {
 		t.Errorf("Test failed: Passing empty viper to config")
 	}
 
@@ -298,9 +292,7 @@ func TestApplyDefaultScannerConfig(t *testing.T) {
 	if !result.IsSet("ratelimit") || result.GetFloat64("ratelimit") != 25 {
 		t.Errorf("Test failed: Passing changed value to config")
 	}
-	if !result.IsSet("zgrab2.enabledModules") {
-		t.Errorf("Test failed: Passing changed value to config")
-	}
+
 }
 
 func TestApplyDefaultScannerTCPConfig(t *testing.T) {
