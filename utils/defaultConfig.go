@@ -55,7 +55,6 @@ func ApplyDefaultScannerConfig(config *viper.Viper) *viper.Viper {
 	defaultConfig := viper.New()
 	defaultConfig.SetDefault("workers", 250)
 	defaultConfig.SetDefault("ratelimit", "none")
-	defaultConfig.SetDefault("zgrab2.enabledModules", []string{})
 	if config != nil {
 		defaultConfig.MergeConfigMap(config.AllSettings())
 	}
@@ -82,59 +81,6 @@ func ApplyDefaultScannerUDPConfig(config *viper.Viper) *viper.Viper {
 	if config != nil {
 		defaultConfig.MergeConfigMap(config.AllSettings())
 
-	}
-	return defaultConfig
-}
-
-// ApplyDefaultScannerZgrab2SSHConfig is called when Zgrab SSH is initialized
-func ApplyDefaultScannerZgrab2SSHConfig(config *viper.Viper) *viper.Viper {
-	defaultConfig := viper.New()
-	defaultConfig.SetDefault("subscribePorts", []string{"tcp/22"})
-	defaultConfig.SetDefault("timeout", "2500ms")
-	defaultConfig.SetDefault("ClientID", "SSH-2.0-Go-nray")
-	// TODO: Research valid / working / useful values for cryptographic primitives
-	defaultConfig.SetDefault("KexAlgorithms", "")
-	defaultConfig.SetDefault("HostKeyAlgorithms", "")
-	defaultConfig.SetDefault("Ciphers", "")
-	defaultConfig.SetDefault("CollectUserAuth", true)
-	defaultConfig.SetDefault("GexMinBits", 1024)
-	defaultConfig.SetDefault("GexMaxBits", 8192)
-	defaultConfig.SetDefault("GexPreferredBits", 2048)
-	defaultConfig.SetDefault("Verbose", false)
-	if config != nil {
-		defaultConfig.MergeConfigMap(config.AllSettings())
-	}
-	return defaultConfig
-}
-
-// ApplyDefaultScannerZgrab2HTTPConfig is called when Zgrab HTTP is initialized
-func ApplyDefaultScannerZgrab2HTTPConfig(config *viper.Viper) *viper.Viper {
-	defaultConfig := viper.New()
-	defaultConfig.SetDefault("subscribeHTTPPorts", []string{"tcp/80", "tcp/8080", "tcp/8000"})
-	defaultConfig.SetDefault("subscribeHTTPSPorts", []string{"tcp/443", "tcp/8443"})
-	defaultConfig.SetDefault("timeout", "2500ms")
-	defaultConfig.SetDefault("method", "GET")
-	defaultConfig.SetDefault("endpoint", "/")
-	defaultConfig.SetDefault("userAgent", "nray")
-	defaultConfig.SetDefault("retryHTTPS", false)
-	defaultConfig.SetDefault("maxSize", 256)
-	defaultConfig.SetDefault("maxRedirects", 2)
-	// TODO: Research valid / working / useful values for cryptographic primitives
-	defaultConfig.SetDefault("heartbleed", true)
-	defaultConfig.SetDefault("sessionTicket", true)
-	defaultConfig.SetDefault("extendedMasterSecret", true)
-	defaultConfig.SetDefault("extendedRandom", true)
-	defaultConfig.SetDefault("noSNI", false)
-	defaultConfig.SetDefault("sctExt", false)
-	defaultConfig.SetDefault("keepClientLogs", false)
-	defaultConfig.SetDefault("verifyServerCertificate", false)
-	defaultConfig.SetDefault("minVersion", 0)
-	defaultConfig.SetDefault("maxVersion", 0)
-	defaultConfig.SetDefault("noECDHE", false)
-	defaultConfig.SetDefault("heartbeatEnabled", true)
-	defaultConfig.SetDefault("dsaEnabled", true)
-	if config != nil {
-		defaultConfig.MergeConfigMap(config.AllSettings())
 	}
 	return defaultConfig
 }
