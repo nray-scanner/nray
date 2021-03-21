@@ -9,8 +9,6 @@ import (
 )
 
 var cfgFile string
-var version = "0.0.1"
-
 var nodeCmdArgs core.NodeCmdArgs
 
 // SetHardcodedServerAndPort is a workaround to get values set by the linker into
@@ -26,16 +24,12 @@ func SetHardcodedServerAndPort(hardcodedServer string, hardcodedPort string) {
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "nray",
-	Version: version,
-	Short:   "A modern, performant, distributed port-scanner",
+	Use:   "nray",
+	Short: "A modern, performant, distributed port-scanner",
 	Long: `nray is port scanner written from scratch that is built
 in order to get work done fast and reliably. It allows to attach 
 multiple scanner nodes and to distribute work amongst them in order
 to speed up scans and improve the accuracy of results.
-
-For a quick scan from command line, "nray scan" allows to get your scan
-up and running in a few seconds. 
 `,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
