@@ -9,7 +9,14 @@ import (
 // This variables can be set at build time :)
 var server string
 var port string
-var nrayVersion = "1.2.0"
+
+// These are set by goreleaser
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+	builtBy = "unknown"
+)
 
 func main() {
 	printMeta()
@@ -18,5 +25,5 @@ func main() {
 }
 
 func printMeta() {
-	fmt.Printf("nray %s\n", nrayVersion)
+	fmt.Printf("nray %s\nBuilt on %s from commit %s\n", version, date, commit)
 }
