@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/apparentlymart/go-cidr/cidr"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/viper"
 
 	"github.com/bitfield/script"
@@ -45,7 +44,6 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 		}
 	}
 
-	spew.Dump(generator.rawTargets)
 	generator.blacklist = NewBlacklist()
 	for _, blacklistItem := range conf.GetStringSlice("blacklist") {
 		_ = generator.blacklist.AddToBlacklist(blacklistItem)
