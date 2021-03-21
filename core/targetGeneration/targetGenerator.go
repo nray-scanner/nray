@@ -236,9 +236,9 @@ func ParsePorts(rawPorts []string, proto string) []uint16 {
 		} else if portRangeRegexpr.MatchString(candidate) { // A port range. Split, sort, flatten.
 			splitted := strings.Split(candidate, "-")
 			first, err := strconv.ParseUint(splitted[0], 10, 32)
-			if err == nil {
+			if err == nil && first <= math.MaxUint16 {
 				second, err := strconv.ParseUint(splitted[1], 10, 32)
-				if err == nil {
+				if err == nil && second <= math.MaxUint16 {
 					var start, end uint16
 					if first <= second {
 						start = uint16(first)
