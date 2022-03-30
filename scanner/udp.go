@@ -47,7 +47,10 @@ func UDPProtoScan(target string, port uint32, config UDPScanner) (*PortscanResul
 	if err != nil && strings.Contains(err.Error(), "socket: too many open files") {
 		return nil, fmt.Errorf("Too many open files. You are running too many scan workers and the OS is limiting file descriptors. YOU ARE MISSING SCAN RESULTS. Scan with less workers")
 	}
-	utils.CheckError(err, false)
+	if err != nil {
+		utils.CheckError(err, false)
+		return nil, nil
+	}
 	defer conn.Close()
 	// This is the real timeout that is applied. We send a packet and wait for a response or receive an error in case of timeout
 	conn.SetDeadline(time.Now().Add(config.timeout))
