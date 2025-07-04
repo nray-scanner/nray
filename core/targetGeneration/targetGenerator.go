@@ -1,7 +1,6 @@
 package targetgeneration
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 	"net"
@@ -15,18 +14,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
-
-var availableBackends = []string{"standard", "certificatetransparency", "ldap"}
-
-// getBackend returns the correct backend for a backend name
-func getBackend(backendName string) targetGeneratorBackend {
-	switch backendName {
-	case "standard":
-		return &standardTGBackend{}
-	default:
-		return nil
-	}
-}
 
 // AnyTargets is the most abstract type holding information
 // regarding targets. Any number of hosts, networks, ports etc.
@@ -54,20 +41,15 @@ type TargetGenerator struct {
 // and sets up the TargetGenerator to receive targets from
 func (tg *TargetGenerator) Init(config *viper.Viper) {
 	tg.targetChan = make(chan AnyTargets, config.GetInt("buffersize"))
-	for _, availableBackend := range availableBackends {
-		// For each backend enabled
-		if config.GetBool(fmt.Sprintf("%s.enabled", availableBackend)) {
-			// Get a new instance of the backend
-			backend := getBackend(availableBackend)
-			// Supply config
-			err := backend.configure(config.Sub(availableBackend))
-			utils.CheckError(err, true)
-			tg.targetCount, err = backend.targetCount()
-			utils.CheckError(err, false)
-			// Append channel to slice holding all channels that are sending work
-			tg.targetChannels = append(tg.targetChannels, backend.receiveTargets())
-		}
-	}
+
+	backend := &standardTGBackend{}
+	// Supply config
+	err := backend.configure(config.Sub("standard"))
+	utils.CheckError(err, true)
+	tg.targetCount, err = backend.targetCount()
+	utils.CheckError(err, false)
+	// Append channel to slice holding all channels that are sending work
+	tg.targetChannels = append(tg.targetChannels, backend.receiveTargets())
 	go tg.zipChannels()
 }
 
