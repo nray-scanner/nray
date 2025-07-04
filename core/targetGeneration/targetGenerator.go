@@ -115,7 +115,7 @@ func GetNmapTopTCPPorts(topN uint) []uint16 {
 	if topN > uint(len(TopTCPPorts)) {
 		topN = uint(len(TopTCPPorts))
 	}
-	return TopTCPPorts[0:int(topN)]
+	return TopTCPPorts[0:uint(topN)]
 }
 
 // GetNmapTopUDPPorts returns an array containing the topN UDP ports
@@ -123,7 +123,7 @@ func GetNmapTopUDPPorts(topN uint) []uint16 {
 	if topN > uint(len(TopUDPPorts)) {
 		topN = uint(len(TopUDPPorts))
 	}
-	return TopUDPPorts[0:int(topN)]
+	return TopUDPPorts[0:uint(topN)]
 }
 
 // GenerateIPStreamFromCIDR uses the ZMap algorithm to expand a CIDR network.
