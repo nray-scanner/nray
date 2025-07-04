@@ -1,9 +1,5 @@
 # This is an example .goreleaser.yml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
-before:
-  hooks:
-    # You may remove this if you don't use go modules.
-    - go mod tidy
 builds:
   - env:
       - CGO_ENABLED=0
@@ -12,23 +8,15 @@ builds:
       - windows
       - darwin
     goarch:
-      - arm64
       - amd64
-      - 386
+      - arm64
     goarm:
-      - 6
-      - 7
+      - "7" # Only needed for ARMv7 (Raspberry Pi 3/4 32-bit), can be omitted if only ARM64 is needed
 archives:
   - id: default
     format: zip
-    replacements:
-       darwin: Darwin
-       linux: Linux
-       windows: Windows
-       386: i386
-       amd64: x86_64
     files:
-      - nray-conf*
+      - nray*
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -40,4 +28,4 @@ changelog:
       - '^docs:'
       - '^test:'
 release:
-  prerelease: true
+  prerelease: "true"
