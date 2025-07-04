@@ -1,13 +1,14 @@
 package targetgeneration
 
 import (
+	"bufio"
 	"net"
+	"os"
 	"strings"
 
 	"github.com/apparentlymart/go-cidr/cidr"
 	"github.com/spf13/viper"
 
-	"github.com/bitfield/script"
 	"github.com/nray-scanner/nray/utils"
 	log "github.com/sirupsen/logrus"
 )
@@ -37,7 +38,19 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 	generator.maxUDPPorts = uint(conf.GetInt("maxUdpPortsPerBatch"))
 
 	if conf.IsSet("targetFile") && strings.Trim(conf.GetString("targetFile"), " ") != "" {
-		targetHosts, err := script.File(conf.GetString("targetFile")).Slice()
+		file, err := os.Open(conf.GetString("targetFile"))
+		utils.CheckError(err, false)
+		defer file.Close()
+
+		var targetHosts []string
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if line != "" {
+				targetHosts = append(targetHosts, line)
+			}
+		}
+		err = scanner.Err()
 		utils.CheckError(err, false)
 		for _, target := range targetHosts {
 			generator.rawTargets = append(generator.rawTargets, target)
@@ -49,11 +62,19 @@ func (generator *standardTGBackend) configure(conf *viper.Viper) error {
 		_ = generator.blacklist.AddToBlacklist(blacklistItem)
 	}
 	if conf.IsSet("blacklistFile") && strings.Trim(conf.GetString("blacklistFile"), " ") != "" {
-		blacklistHosts, err := script.File(conf.GetString("blacklistFile")).Slice()
+		file, err := os.Open(conf.GetString("blacklistFile"))
 		utils.CheckError(err, false)
-		for _, blacklistItem := range blacklistHosts {
-			_ = generator.blacklist.AddToBlacklist(blacklistItem)
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if line != "" {
+				_ = generator.blacklist.AddToBlacklist(line)
+			}
 		}
+		err = scanner.Err()
+		utils.CheckError(err, false)
 	}
 
 	generator.tcpPorts = ParsePorts(conf.GetStringSlice("tcpports"), "tcp")
